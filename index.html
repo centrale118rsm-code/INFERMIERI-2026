@@ -277,12 +277,12 @@
         input[type="file"] { display:none; }
 
         /* MODALI */
-        #shift-modal,#dinner-modal,#options-modal,#notif-center-modal,#month-select-modal {
+        #shift-modal,#dinner-modal,#options-modal,#notif-center-modal,#month-select-modal,#wheel-modal {
             display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:3000;
             backdrop-filter:blur(8px); align-items:flex-end; justify-content:center;
             opacity:0; transition:opacity 0.3s;
         }
-        #shift-modal.open,#dinner-modal.open,#options-modal.open,#notif-center-modal.open,#month-select-modal.open { opacity:1; }
+        #shift-modal.open,#dinner-modal.open,#options-modal.open,#notif-center-modal.open,#month-select-modal.open,#wheel-modal.open { opacity:1; }
         .modal-content {
             background:var(--bg-card); width:100%; max-width:600px; border-radius:24px 24px 0 0;
             box-shadow:0 -10px 40px rgba(0,0,0,0.3); overflow:hidden;
@@ -291,7 +291,7 @@
         }
         #shift-modal.open .modal-content,#dinner-modal.open .modal-content,
         #options-modal.open .modal-content,#notif-center-modal.open .modal-content,
-        #month-select-modal.open .modal-content { transform:translateY(0); }
+        #month-select-modal.open .modal-content,#wheel-modal.open .modal-content { transform:translateY(0); }
         .modal-header { background:var(--bg); color:var(--text-main); padding:20px 24px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); }
         .header-text h3 { margin:0; font-size:1.3rem; font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:10px; }
         .header-text span { display:block; font-size:0.9rem; font-weight:600; color:var(--text-sec); margin-top:4px; }
@@ -355,6 +355,49 @@
         .d-res-score { background:#dcfce7; color:#15803d; font-weight:700; padding:4px 12px; border-radius:20px; font-size:0.85rem; }
         .missing-list { display:flex; flex-wrap:wrap; gap:6px; }
         .missing-badge { background:#fee2e2; color:#b91c1c; font-size:0.75rem; font-weight:600; padding:4px 8px; border-radius:6px; }
+
+        /* ── RUOTA DELLA SFIGA ────────────────────────────────────────────── */
+        .wheel-steps-nav { display:flex; align-items:center; gap:8px; padding:14px 20px 0 20px; color:var(--primary); font-weight:700; font-size:0.85rem; cursor:pointer; }
+        .wheel-mode-grid { display:flex; flex-direction:column; gap:14px; padding:16px 20px 24px; }
+        .wheel-mode-card { background:var(--bg); border:2px solid var(--border); border-radius:18px; padding:18px; display:flex; align-items:center; gap:16px; cursor:pointer; transition:0.2s; }
+        .wheel-mode-card:active { transform:scale(0.97); }
+        .wheel-mode-card .wm-icon { width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:1.6rem; background:linear-gradient(135deg,#fde68a,#fbbf24); box-shadow:0 4px 10px rgba(251,191,36,0.4); }
+        .wheel-mode-card.mode-b .wm-icon { background:linear-gradient(135deg,#c7d2fe,#818cf8); box-shadow:0 4px 10px rgba(129,140,248,0.4); }
+        .wheel-mode-card .wm-title { font-weight:800; font-size:1rem; color:var(--text-main); }
+        .wheel-mode-card .wm-desc { font-size:0.78rem; color:var(--text-sec); font-weight:600; margin-top:2px; }
+        .slot-add-row { display:flex; gap:10px; padding:0 20px 10px; align-items:center; }
+        .slot-add-row input[type="time"] { flex:1; padding:12px; border-radius:12px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-main); font-weight:700; font-size:0.95rem; }
+        .slot-add-btn { width:46px; height:46px; border-radius:12px; background:var(--primary); color:white; border:none; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 10px rgba(37,99,235,0.35); }
+        .slot-add-btn:active { transform:scale(0.94); }
+        .slot-chip-list { display:flex; flex-wrap:wrap; gap:10px; padding:6px 20px 20px; }
+        .slot-chip { background:#eef2ff; color:#3730a3; border:1px solid #c7d2fe; border-radius:20px; padding:8px 10px 8px 16px; font-weight:800; font-size:0.9rem; display:flex; align-items:center; gap:8px; }
+        body.dark-mode .slot-chip { background:#312e81; color:#c7d2fe; border-color:#4338ca; }
+        .slot-chip .sc-x { width:20px; height:20px; border-radius:50%; background:rgba(0,0,0,0.08); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px; }
+        .btn-wheel-primary { width:calc(100% - 40px); margin:0 20px 20px; background:linear-gradient(135deg,#f97316,#ea580c); color:white; border:none; border-radius:14px; padding:16px; font-weight:800; font-size:1rem; display:flex; align-items:center; justify-content:center; gap:10px; box-shadow:0 6px 16px rgba(234,88,12,0.4); }
+        .btn-wheel-primary:active { transform:scale(0.97); }
+        .btn-wheel-primary:disabled { opacity:0.45; box-shadow:none; }
+        .wheel-arena-wrap { display:flex; flex-direction:column; align-items:center; padding:10px 20px 8px; }
+        .wheel-current-slot { text-align:center; font-weight:800; color:var(--text-sec); font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+        .wheel-current-slot b { color:#ea580c; font-size:1.3rem; display:block; margin-top:2px; }
+        .wheel-arena { position:relative; width:260px; height:260px; margin:8px auto 14px; }
+        .wheel-pointer { position:absolute; top:-4px; left:50%; transform:translateX(-50%); z-index:5; width:0; height:0; border-left:15px solid transparent; border-right:15px solid transparent; border-top:26px solid #ef4444; filter:drop-shadow(0 3px 3px rgba(0,0,0,0.35)); }
+        .wheel-svg-holder { width:100%; height:100%; border-radius:50%; box-shadow:0 10px 30px rgba(0,0,0,0.35), 0 0 0 8px var(--bg-card), 0 0 0 10px var(--border); transition:transform 4.2s cubic-bezier(0.12,0.83,0.14,1); }
+        .wheel-hub { position:absolute; top:50%; left:50%; width:46px; height:46px; margin:-23px 0 0 -23px; border-radius:50%; background:var(--bg-card); box-shadow:0 3px 10px rgba(0,0,0,0.3); display:flex; align-items:center; justify-content:center; z-index:4; border:3px solid var(--primary); color:var(--primary); }
+        .btn-spin { width:calc(100% - 40px); margin:4px 20px 20px; background:linear-gradient(135deg,#16a34a,#15803d); color:white; border:none; border-radius:14px; padding:16px; font-weight:800; font-size:1.05rem; letter-spacing:0.5px; box-shadow:0 6px 16px rgba(21,128,61,0.4); }
+        .btn-spin:active { transform:scale(0.97); }
+        .btn-spin:disabled { opacity:0.5; }
+        .wheel-assign-list { padding:0 20px 8px; display:flex; flex-direction:column; gap:8px; }
+        .wheel-assign-item { background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px 14px; display:flex; justify-content:space-between; align-items:center; font-weight:700; }
+        .wheel-assign-item .wa-time { color:#ea580c; font-weight:900; }
+        .wheel-assign-item .wa-name { color:var(--text-main); }
+        .wheel-done-banner { margin:0 20px 20px; background:#dcfce7; color:#166534; border-radius:14px; padding:16px; text-align:center; font-weight:800; }
+        .character-reveal { display:none; flex-direction:column; align-items:center; padding:10px 20px 24px; text-align:center; }
+        .character-reveal.show { display:flex; animation:charPop 0.45s cubic-bezier(0.34,1.56,0.64,1); }
+        @keyframes charPop { 0%{ transform:scale(0.3) rotate(-8deg); opacity:0; } 100%{ transform:scale(1) rotate(0); opacity:1; } }
+        .char-avatar { width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg,#fbbf24,#f97316); color:white; font-weight:900; font-size:2.2rem; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(249,115,22,0.4); border:4px solid white; margin-bottom:14px; }
+        .char-name { font-weight:900; font-size:1.25rem; color:var(--text-main); margin-bottom:10px; }
+        .char-bubble { background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:16px 18px; font-weight:700; font-size:0.95rem; color:var(--text-main); position:relative; max-width:340px; }
+        .char-bubble:before { content:''; position:absolute; top:-9px; left:50%; transform:translateX(-50%); border-left:9px solid transparent; border-right:9px solid transparent; border-bottom:9px solid var(--bg); }
         #alert-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center; opacity:0; transition:opacity 0.3s; padding:20px; }
         #alert-modal.open { opacity:1; }
         .alert-card { background:var(--bg-card); width:100%; max-width:400px; border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,0.4); overflow:hidden; transform:scale(0.9); transition:transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275); border:1px solid var(--border); }
@@ -585,6 +628,98 @@
     </div>
 </div>
 
+<div id="wheel-modal" onclick="closeWheelModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()" style="height:92vh;max-height:92vh;">
+        <div class="modal-header" style="background:#fff7ed;border-bottom-color:#ffedd5;">
+            <div class="header-text">
+                <h3 style="color:#ea580c"><span class="material-icons-round" style="margin-right:8px">casino</span> LA RUOTA DELLA SFIGA</h3>
+                <span style="color:#fb923c" id="wheel-subtitle">Chi tocca stavolta?</span>
+            </div>
+            <button class="btn-close-modal" onclick="closeWheelModal()">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        <div class="modal-body" style="background:var(--bg-card);display:flex;flex-direction:column;height:100%;">
+
+            <!-- STEP 1: selezione infermieri -->
+            <div id="wheel-step-1">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding-right:20px;">
+                    <div class="dinner-section-title">1. CHI PARTECIPA ALLA SFIGA?</div>
+                    <button onclick="toggleAllWheelNurses()" style="background:none;border:none;color:var(--primary);font-weight:bold;cursor:pointer;font-size:0.8rem;padding:10px;">Tutti/Nessuno</button>
+                </div>
+                <div class="dinner-checkbox-list" id="wheel-nurse-list"></div>
+                <button class="btn-wheel-primary" id="wheel-step1-continue" onclick="goToWheelStep2()" disabled>
+                    <span class="material-icons-round">arrow_forward</span> AVANTI (min. 2)
+                </button>
+            </div>
+
+            <!-- STEP 2: scelta modalità -->
+            <div id="wheel-step-2" style="display:none;">
+                <div class="wheel-steps-nav" onclick="goToWheelStep(1)"><span class="material-icons-round" style="font-size:18px">arrow_back</span> Torna alla selezione</div>
+                <div class="dinner-section-title">2. A COSA SERVE OGGI LA RUOTA?</div>
+                <div class="wheel-mode-grid">
+                    <div class="wheel-mode-card mode-a" onclick="chooseWheelMode('slots')">
+                        <div class="wm-icon"><span class="material-icons-round">schedule</span></div>
+                        <div>
+                            <div class="wm-title">Smista le Fasce Orarie</div>
+                            <div class="wm-desc">Inserisci solo l'orario di inizio (la fine è sempre le 06:30): la ruota divide il turno in 3 fasce e assegna a caso chi tocca per ognuna.</div>
+                        </div>
+                    </div>
+                    <div class="wheel-mode-card mode-b" onclick="chooseWheelMode('random')">
+                        <div class="wm-icon"><span class="material-icons-round">theater_comedy</span></div>
+                        <div>
+                            <div class="wm-title">Estrazione Random per Ridere</div>
+                            <div class="wm-desc">Gira la ruota e scopri chi la sfiga ha scelto oggi, con tanto di battuta finale.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3a: calcolo automatico delle 3 fasce orarie -->
+            <div id="wheel-step-3-slots" style="display:none;">
+                <div class="wheel-steps-nav" onclick="goToWheelStep(2)"><span class="material-icons-round" style="font-size:18px">arrow_back</span> Cambia modalità</div>
+                <div class="dinner-section-title">3. ORARIO DI INIZIO (fine sempre 06:30)</div>
+                <div class="slot-add-row">
+                    <input type="time" id="wheel-start-time-input" value="13:00">
+                    <button class="slot-add-btn" onclick="calcThreeBands()"><span class="material-icons-round">calculate</span></button>
+                </div>
+                <div style="padding:0 20px 6px;font-size:0.75rem;font-weight:600;color:var(--text-sec);">Il turno verrà diviso automaticamente in 3 fasce uguali fino alle 06:30.</div>
+                <div class="slot-chip-list" id="wheel-slot-list"></div>
+                <button class="btn-wheel-primary" id="wheel-slots-start-btn" onclick="startSlotWheel()" disabled>
+                    <span class="material-icons-round">play_circle</span> AVVIA LA RUOTA
+                </button>
+            </div>
+
+            <!-- STEP 3b/4: la ruota vera e propria -->
+            <div id="wheel-step-spin" style="display:none;">
+                <div class="wheel-steps-nav" onclick="goToWheelStep(2)"><span class="material-icons-round" style="font-size:18px">arrow_back</span> Cambia modalità</div>
+                <div class="wheel-arena-wrap">
+                    <div class="wheel-current-slot" id="wheel-current-slot-label" style="display:none;">Sto assegnando la fascia<b id="wheel-current-slot-time">--:--</b></div>
+                    <div class="wheel-arena">
+                        <div class="wheel-pointer"></div>
+                        <div class="wheel-svg-holder" id="wheel-svg-holder"></div>
+                        <div class="wheel-hub"><span class="material-icons-round">favorite</span></div>
+                    </div>
+                </div>
+                <button class="btn-spin" id="wheel-spin-btn" onclick="doSpin()">GIRA LA RUOTA!</button>
+                <div id="wheel-assign-list" class="wheel-assign-list"></div>
+                <div id="wheel-done-banner" class="wheel-done-banner" style="display:none;">
+                    <span class="material-icons-round" style="vertical-align:middle">celebration</span> Assegnazione completata! Buona (s)fortuna a tutti.
+                </div>
+                <div class="character-reveal" id="wheel-character-reveal">
+                    <div class="char-avatar" id="wheel-char-avatar">??</div>
+                    <div class="char-name" id="wheel-char-name">???</div>
+                    <div class="char-bubble" id="wheel-char-quote">...</div>
+                </div>
+                <button class="btn-wheel-primary" id="wheel-restart-btn" style="display:none;background:linear-gradient(135deg,#64748b,#475569);" onclick="goToWheelStep(1)">
+                    <span class="material-icons-round">refresh</span> RICOMINCIA
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <header>
     <div class="header-main">
         <div class="app-brand">
@@ -619,6 +754,9 @@
             <div id="menu-dropdown">
                 <div class="menu-item" onclick="openDinnerModal()">
                     <span class="material-icons-round">restaurant</span> Organizza Uscita
+                </div>
+                <div class="menu-item" onclick="openWheelModal()">
+                    <span class="material-icons-round">casino</span> La Ruota della Sfiga
                 </div>
                 <div class="menu-item" onclick="openOptionsModal()">
                     <span class="material-icons-round">settings</span> Opzioni
@@ -1228,6 +1366,279 @@
             c.innerHTML+=`<div class="dinner-result-card"><div class="d-res-header"><span class="d-res-date">${x.day} ${dinnerSelectedMonth}</span><span class="d-res-score">${x.score}/${x.tot}</span></div>${x.mis.length?`<div class="missing-list">${x.mis.map(n=>`<span class="missing-badge">${n}</span>`).join("")}</div>`:'<div style="color:green;font-weight:bold;text-align:center">TUTTI LIBERI!</div>'}</div>`;
         });
         document.getElementById('dinner-step-1').style.display='none'; document.getElementById('dinner-step-2').style.display='block';
+    }
+
+    // ── LA RUOTA DELLA SFIGA ─────────────────────────────────────────────────
+    const WHEEL_COLORS = ['#d6266f','#8b3ce0','#2563eb','#f97316','#16a34a','#0891b2','#ca8a04','#dc2626','#059669','#4338ca','#ea580c','#0d9488'];
+    const IRONIC_QUOTES = [
+        "Turno di notte? Il caffè è già in vena.",
+        "Ho salvato tre vite oggi... e la mia dose di caffeina.",
+        "La sala d'attesa è più affollata del mio umore stamattina.",
+        "Ricordate: il paracetamolo non risolve tutto, ma ci prova sempre.",
+        "Il mio corso di laurea non prevedeva 'saper leggere la calligrafia dei medici'.",
+        "Se sopravvivo a questo turno, merito una medaglia. O un caffè doppio.",
+        "La pressione del paziente è normale. La mia, dopo questo turno, no.",
+        "Ho controllato tre volte: il paziente respira meglio di me.",
+        "In 12 ore ho fatto più flebo che passi.",
+        "Il mio superpotere è trovare la vena al primo colpo. A volte.",
+        "Non sono stanco, sono in modalità risparmio energetico.",
+        "Oggi ho imparato che 'urgente' per alcuni significa 'tra due settimane'.",
+        "La ciambella in sala pausa è più contesa del defibrillatore.",
+        "Ho il turno più lungo della giornata e la pazienza più corta.",
+        "Oggi sono stato infermiere, psicologo, cameriere e paciere. Tutto incluso.",
+        "Attenzione: il camice nasconde superpoteri, non un mantello.",
+        "Se il monitor bippa non è colpa mia. Probabilmente.",
+        "Conosco la macchinetta del caffè meglio del mio letto.",
+        "Il mio diario clinico di oggi: 'tutto normale, tranne io'.",
+        "Ho una laurea in scienze infermieristiche e un master in pazienza infinita."
+    ];
+
+    let wheelSelectedNurses = [], wheelMode = '', wheelSlots = [], wheelSlotPool = [],
+        wheelAssignments = [], wheelCurrentSlotIdx = 0, wheelNamesOnWheel = [], wheelSpinning = false;
+
+    function shuffleArr(a) { a = a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+    function getWheelAudioCtx() { if(!window._wheelAudioCtx) window._wheelAudioCtx = new (window.AudioContext||window.webkitAudioContext)(); return window._wheelAudioCtx; }
+    function wheelTickSound() {
+        try {
+            const ctx = getWheelAudioCtx(); const o = ctx.createOscillator(); const g = ctx.createGain();
+            o.type = 'square'; o.frequency.value = 1200; g.gain.value = 0.06;
+            o.connect(g); g.connect(ctx.destination);
+            o.start(); o.stop(ctx.currentTime + 0.03);
+        } catch(e) {}
+    }
+    function wheelFunnySound() {
+        try {
+            const ctx = getWheelAudioCtx(); const t0 = ctx.currentTime;
+            const o1 = ctx.createOscillator(); const g1 = ctx.createGain();
+            o1.type = 'sine'; g1.gain.value = 0.15;
+            o1.frequency.setValueAtTime(1400, t0); o1.frequency.exponentialRampToValueAtTime(300, t0 + 0.5);
+            o1.connect(g1); g1.connect(ctx.destination); o1.start(t0); o1.stop(t0 + 0.5);
+            [440, 660].forEach((f, i) => {
+                const o2 = ctx.createOscillator(); const g2 = ctx.createGain();
+                o2.type = 'sawtooth'; const st = t0 + 0.55 + i*0.18; o2.frequency.value = f;
+                g2.gain.setValueAtTime(0.001, st); g2.gain.exponentialRampToValueAtTime(0.15, st+0.02); g2.gain.exponentialRampToValueAtTime(0.001, st+0.16);
+                o2.connect(g2); g2.connect(ctx.destination); o2.start(st); o2.stop(st + 0.18);
+            });
+        } catch(e) {}
+    }
+    function scheduleWheelTicks(totalDuration) {
+        let elapsed = 0, interval = 60;
+        function tick() {
+            if(elapsed >= totalDuration - 150) return;
+            wheelTickSound();
+            interval = interval * 1.09; elapsed += interval;
+            setTimeout(tick, interval);
+        }
+        tick();
+    }
+
+    function openWheelModal() {
+        toggleMenu();
+        resetWheelFullState();
+        document.getElementById('wheel-modal').style.display = 'flex';
+        setTimeout(() => document.getElementById('wheel-modal').classList.add('open'), 10);
+        goToWheelStep(1);
+    }
+    function closeWheelModal(e) { if(e && e.target !== e.currentTarget) return; let m = document.getElementById('wheel-modal'); m.classList.remove('open'); setTimeout(() => m.style.display = 'none', 200); }
+
+    function resetWheelFullState() {
+        wheelSelectedNurses = []; wheelMode = ''; wheelSlots = []; wheelSlotPool = [];
+        wheelAssignments = []; wheelCurrentSlotIdx = 0; wheelNamesOnWheel = []; wheelSpinning = false;
+        const spinBtn = document.getElementById('wheel-spin-btn'); if(spinBtn) { spinBtn.style.display = 'inline-flex'; spinBtn.disabled = false; spinBtn.innerText = 'GIRA LA RUOTA!'; }
+        const restartBtn = document.getElementById('wheel-restart-btn'); if(restartBtn) restartBtn.style.display = 'none';
+        const doneBanner = document.getElementById('wheel-done-banner'); if(doneBanner) doneBanner.style.display = 'none';
+        const slotLabel = document.getElementById('wheel-current-slot-label'); if(slotLabel) slotLabel.style.display = 'none';
+        const assignList = document.getElementById('wheel-assign-list'); if(assignList) assignList.innerHTML = '';
+        const rev = document.getElementById('wheel-character-reveal'); if(rev) rev.classList.remove('show');
+        const slotList = document.getElementById('wheel-slot-list'); if(slotList) slotList.innerHTML = '';
+        const slotsStartBtn = document.getElementById('wheel-slots-start-btn'); if(slotsStartBtn) slotsStartBtn.disabled = true;
+    }
+
+    function hideAllWheelSteps() {
+        ['wheel-step-1','wheel-step-2','wheel-step-3-slots','wheel-step-spin'].forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; });
+    }
+
+    function goToWheelStep(n) {
+        vibrate(); hideAllWheelSteps();
+        if(n === 1) { document.getElementById('wheel-step-1').style.display = 'block'; renderWheelNurseList(); }
+        if(n === 2) { document.getElementById('wheel-step-2').style.display = 'block'; }
+    }
+
+    function renderWheelNurseList() {
+        const dl = document.getElementById('wheel-nurse-list'); dl.innerHTML = '';
+        drivers.forEach(d => {
+            let l = document.createElement('label'); l.className = 'dinner-check-item';
+            l.innerHTML = `<input type="checkbox" value="${d.name}" onchange="this.parentElement.classList.toggle('checked');updateWheelContinueBtn();vibrate()"><div class="dinner-check-icon"><span class="material-icons-round" style="font-size:14px">check</span></div>${d.name}`;
+            dl.appendChild(l);
+        });
+        updateWheelContinueBtn();
+    }
+    function updateWheelContinueBtn() {
+        const n = document.querySelectorAll('#wheel-nurse-list input:checked').length;
+        document.getElementById('wheel-step1-continue').disabled = n < 2;
+    }
+    function toggleAllWheelNurses() {
+        vibrate(); let ck = document.querySelectorAll('#wheel-nurse-list input'); let all = Array.from(ck).every(c => c.checked);
+        ck.forEach(c => { c.checked = !all; c.parentElement.classList.toggle('checked', !all); });
+        updateWheelContinueBtn();
+    }
+
+    function goToWheelStep2() {
+        const checked = Array.from(document.querySelectorAll('#wheel-nurse-list input:checked')).map(x => x.value);
+        if(checked.length < 2) return alert("Seleziona almeno 2 infermieri!");
+        vibrate(); wheelSelectedNurses = checked;
+        hideAllWheelSteps(); document.getElementById('wheel-step-2').style.display = 'block';
+    }
+
+    function chooseWheelMode(mode) {
+        vibrate(); wheelMode = mode; hideAllWheelSteps();
+        if(mode === 'slots') {
+            document.getElementById('wheel-step-3-slots').style.display = 'block';
+        } else {
+            wheelNamesOnWheel = wheelSelectedNurses.slice();
+            document.getElementById('wheel-step-spin').style.display = 'block';
+            document.getElementById('wheel-current-slot-label').style.display = 'none';
+            renderWheelGraphic(wheelNamesOnWheel);
+        }
+    }
+
+    function calcThreeBands() {
+        vibrate();
+        const startVal = document.getElementById('wheel-start-time-input').value;
+        if(!startVal) return alert("Inserisci l'orario di inizio!");
+        const [sh, sm] = startVal.split(':').map(Number);
+        const startMinutes = sh*60 + sm;
+        const endMinutes = 6*60 + 30; // 06:30, sempre fine turno
+        let duration = ((endMinutes - startMinutes) + 1440) % 1440;
+        if(duration === 0) duration = 1440;
+        const third = duration/3;
+        const b0 = startMinutes, b1 = startMinutes + third, b2 = startMinutes + 2*third, b3 = startMinutes + duration;
+        const fmt = m => { m = Math.round(m) % 1440; const h = Math.floor(m/60), mm = m%60; return String(h).padStart(2,'0') + ':' + String(mm).padStart(2,'0'); };
+        wheelSlots = [
+            `${fmt(b0)} - ${fmt(b1)}`,
+            `${fmt(b1)} - ${fmt(b2)}`,
+            `${fmt(b2)} - ${fmt(b3)}`
+        ];
+        renderWheelSlotChips();
+    }
+    function renderWheelSlotChips() {
+        const c = document.getElementById('wheel-slot-list'); c.innerHTML = '';
+        wheelSlots.forEach(s => { c.innerHTML += `<div class="slot-chip">${s}</div>`; });
+        document.getElementById('wheel-slots-start-btn').disabled = wheelSlots.length < 1;
+    }
+    function startSlotWheel() {
+        vibrate();
+        wheelSlotPool = shuffleArr(wheelSelectedNurses); wheelAssignments = []; wheelCurrentSlotIdx = 0;
+        wheelNamesOnWheel = wheelSlotPool.slice();
+        hideAllWheelSteps(); document.getElementById('wheel-step-spin').style.display = 'block';
+        document.getElementById('wheel-current-slot-label').style.display = 'block';
+        document.getElementById('wheel-current-slot-time').innerText = wheelSlots[0];
+        document.getElementById('wheel-assign-list').innerHTML = '';
+        renderWheelGraphic(wheelNamesOnWheel);
+    }
+
+    let wheelExpandedSegments = [];
+
+    function buildWheelLayout(uniqueNames) {
+        if(!uniqueNames || uniqueNames.length === 0) return [];
+        const targetTotal = 10;
+        let repeat = Math.max(2, Math.round(targetTotal/uniqueNames.length));
+        if(uniqueNames.length > 6) repeat = 2;
+        const segments = [];
+        for(let r = 0; r < repeat; r++) { uniqueNames.forEach(nm => segments.push(nm)); }
+        return segments;
+    }
+
+    function buildWheelSVG(uniqueNames) {
+        const segments = buildWheelLayout(uniqueNames);
+        wheelExpandedSegments = segments;
+        const n = segments.length, seg = 360/n, cx=150, cy=150, r=150; let paths = '';
+        const fontSize = n > 12 ? 12 : (n > 8 ? 14 : 16);
+        segments.forEach((name, i) => {
+            const start = -90 + i*seg, end = -90 + (i+1)*seg;
+            const sr = start*Math.PI/180, er = end*Math.PI/180;
+            const x1 = cx + r*Math.cos(sr), y1 = cy + r*Math.sin(sr);
+            const x2 = cx + r*Math.cos(er), y2 = cy + r*Math.sin(er);
+            const largeArc = seg > 180 ? 1 : 0;
+            const color = WHEEL_COLORS[uniqueNames.indexOf(name) % WHEEL_COLORS.length];
+            const mid = start + seg/2;
+            const textRadius = r * 0.66;
+            let label = name.length > 14 ? name.substring(0,13) + '…' : name;
+            paths += `<path d="M${cx},${cy} L${x1.toFixed(2)},${y1.toFixed(2)} A${r},${r} 0 ${largeArc} 1 ${x2.toFixed(2)},${y2.toFixed(2)} Z" fill="${color}" stroke="#fff" stroke-width="2"/>`;
+            paths += `<text x="${textRadius.toFixed(2)}" y="0" transform="translate(${cx},${cy}) rotate(${mid.toFixed(2)})" fill="#fff" font-size="${fontSize}" font-weight="800" text-anchor="middle" dominant-baseline="middle" font-family="Inter,sans-serif" style="letter-spacing:0.2px;">${label}</text>`;
+        });
+        return `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;">${paths}</svg>`;
+    }
+    function renderWheelGraphic(names) {
+        const holder = document.getElementById('wheel-svg-holder');
+        holder.style.transition = 'none'; holder.style.transform = 'rotate(0deg)';
+        holder.innerHTML = buildWheelSVG(names);
+        holder.getBoundingClientRect();
+        holder.style.transition = 'transform 4.2s cubic-bezier(0.12,0.83,0.14,1)';
+    }
+
+    function doSpin() {
+        if(wheelSpinning) return;
+        const segments = wheelExpandedSegments;
+        if(!segments || segments.length === 0) return;
+        wheelSpinning = true; vibrate();
+        document.getElementById('wheel-spin-btn').disabled = true;
+        const total = segments.length, seg = 360/total;
+        const winnerIndex = Math.floor(Math.random()*total);
+        const winnerName = segments[winnerIndex];
+        const segCenterFromTop = winnerIndex*seg + seg/2;
+        const needed = (360 - segCenterFromTop) % 360;
+        const extraSpins = 6 + Math.floor(Math.random()*3);
+        const target = extraSpins*360 + needed;
+        document.getElementById('wheel-svg-holder').style.transform = `rotate(${target}deg)`;
+        scheduleWheelTicks(4200);
+        setTimeout(() => {
+            wheelFunnySound();
+            if(navigator.vibrate) navigator.vibrate([40,60,40,120]);
+            wheelSpinning = false;
+            onWheelSpinResolved(winnerName);
+        }, 4200);
+    }
+
+    function onWheelSpinResolved(winnerName) {
+        if(wheelMode === 'slots') {
+            const slotTime = wheelSlots[wheelCurrentSlotIdx];
+            wheelAssignments.push({ time: slotTime, name: winnerName });
+            renderWheelAssignList();
+            wheelSlotPool = wheelSlotPool.filter(nm => nm !== winnerName);
+            wheelCurrentSlotIdx++;
+            if(wheelCurrentSlotIdx >= wheelSlots.length) {
+                document.getElementById('wheel-spin-btn').style.display = 'none';
+                document.getElementById('wheel-current-slot-label').style.display = 'none';
+                document.getElementById('wheel-done-banner').style.display = 'block';
+                document.getElementById('wheel-restart-btn').style.display = 'flex';
+            } else {
+                if(wheelSlotPool.length === 0) wheelSlotPool = shuffleArr(wheelSelectedNurses);
+                wheelNamesOnWheel = wheelSlotPool.slice();
+                document.getElementById('wheel-current-slot-time').innerText = wheelSlots[wheelCurrentSlotIdx];
+                renderWheelGraphic(wheelNamesOnWheel);
+                document.getElementById('wheel-spin-btn').disabled = false;
+            }
+        } else {
+            showWheelCharacterReveal(winnerName);
+            const spinBtn = document.getElementById('wheel-spin-btn'); spinBtn.innerText = 'GIRA ANCORA!'; spinBtn.disabled = false;
+            document.getElementById('wheel-restart-btn').style.display = 'flex';
+        }
+    }
+
+    function renderWheelAssignList() {
+        const c = document.getElementById('wheel-assign-list'); c.innerHTML = '';
+        wheelAssignments.forEach(a => { c.innerHTML += `<div class="wheel-assign-item"><span class="wa-time">${a.time}</span><span class="wa-name">${a.name}</span></div>`; });
+    }
+
+    function showWheelCharacterReveal(name) {
+        const rev = document.getElementById('wheel-character-reveal');
+        rev.classList.remove('show'); void rev.offsetWidth;
+        document.getElementById('wheel-char-avatar').innerText = name.substring(0,2).toUpperCase();
+        document.getElementById('wheel-char-name').innerText = name;
+        document.getElementById('wheel-char-quote').innerText = IRONIC_QUOTES[Math.floor(Math.random()*IRONIC_QUOTES.length)];
+        rev.classList.add('show');
     }
 </script>
 </body>
