@@ -1340,6 +1340,7 @@
     // ── Identità utente ("Chi sei?") ─────────────────────────────────────────
     const IDENTITY_EXTRA_OPTIONS = ["Frisoni", "Ospite"];
     let userIdentity = localStorage.getItem('infermieri_identity_name') || null;
+    let identityRecoveryPromise = null;
 
     function getDeviceLabel() {
         const ua = navigator.userAgent;
@@ -1361,6 +1362,7 @@
     async function initFirebaseTracking() {
         if(!fbReady) return;
         try { await fbAuth.signInAnonymously(); } catch(e) { console.error("Auth anonima fallita:", e); }
+        identityRecoveryPromise = tryRecoverIdentityFromUid();
         try {
             await db.collection('infermieri26_accessi').doc(sessionId).set({
                 device: getDeviceLabel(),
@@ -1381,6 +1383,28 @@
             } catch(e) {}
         });
         listenConfigChanges();
+    }
+
+    // Rete di sicurezza: se il browser ha cancellato i dati salvati sul dispositivo
+    // (es. Safari iOS dopo 7gg di inattività, "pulizia dati" automatica, ecc.)
+    // proviamo a recuperare l'identità dal profilo anonimo Firebase, che è
+    // collegato allo stesso dispositivo/browser in modo indipendente.
+    async function tryRecoverIdentityFromUid() {
+        if(userIdentity || !fbReady) return;
+        try {
+            const uid = fbAuth.currentUser && fbAuth.currentUser.uid; if(!uid) return;
+            const doc = await db.collection('infermieri26_identities').doc(uid).get();
+            if(doc.exists && doc.data().name) {
+                userIdentity = doc.data().name;
+                localStorage.setItem('infermieri_identity_name', userIdentity);
+            }
+        } catch(e) { console.error("Errore recupero identità di riserva:", e); }
+    }
+    function persistIdentityToUidBackup() {
+        if(!fbReady || !fbAuth.currentUser) return;
+        db.collection('infermieri26_identities').doc(fbAuth.currentUser.uid)
+            .set({ name: userIdentity || null, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge:true })
+            .catch(e => console.error("Errore salvataggio identità di riserva:", e));
     }
 
     function writeIdentityToSession() {
@@ -1440,6 +1464,7 @@
         userIdentity = name;
         localStorage.setItem('infermieri_identity_name', name);
         writeIdentityToSession();
+        persistIdentityToUidBackup();
         let m = document.getElementById('identity-modal'); m.classList.remove('open');
         setTimeout(() => { m.style.display = 'none'; showStartupMessages(); }, 300);
     }
@@ -1451,6 +1476,7 @@
         localStorage.removeItem('infermieri_identity_name');
         userIdentity = null;
         await writeIdentityToSession();
+        persistIdentityToUidBackup();
         openIdentityModal();
     }
 
@@ -2086,7 +2112,7 @@
     }
 
     function closeWelcomeModal() {
-        vibrate(); let m = document.getElementById('welcome-modal');
+        let m = document.getElementById('welcome-modal');
         m.classList.remove('open');
         setTimeout(() => {
             m.style.display = 'none';
@@ -2107,7 +2133,8 @@
         initNotificationOptions(); loadNotificationHistory(); renderTable(); startLiveClock();
         setCurrentView("Tabella Turni");
         setTimeout(scrollToToday, 600); setTimeout(checkForScheduleChanges, 2500);
-        setTimeout(() => {
+        setTimeout(async () => {
+            if(!userIdentity && identityRecoveryPromise) { try { await identityRecoveryPromise; } catch(e) {} }
             if(userIdentity) { writeIdentityToSession(); showStartupMessages(); }
             else showIdentityInfoPopup();
         }, 1700);
