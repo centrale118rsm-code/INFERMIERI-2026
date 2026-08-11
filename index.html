@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#ffffff" id="theme-color-meta">
+    <meta name="theme-color" content="#e9edf3" id="theme-color-meta">
     <meta name="apple-mobile-web-app-title" content="Infermieri 26">
     <meta name="description" content="Gestione Turni Infermieri 2026">
     <link rel="manifest" href="manifest.json">
@@ -14,55 +14,63 @@
     <link rel="icon" type="image/png" href="logo.png">
     <title>INFERMIERI 2026</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <style>
         * { -webkit-tap-highlight-color: transparent; user-select: none; box-sizing: border-box; outline: none; }
         :root {
             --safe-top: env(safe-area-inset-top, 0px);
-            --header-base-h: 115px;
+            --header-base-h: 68px;
             --header-h: calc(var(--header-base-h) + var(--safe-top));
-            --primary: #2563eb;
-            --bg: #f8fafc;
+            --primary: #1d4ed8;
+            --bg: #e9edf3;
             --bg-card: #ffffff;
-            --text-main: #0f172a;
-            --text-sec: #64748b;
-            --border: #e2e8f0;
-            --header-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #0b1220;
+            --text-sec: #47526b;
+            --border: #d6dce6;
+            --header-bg: rgba(255, 255, 255, 0.82);
             --cell-h: 70px;
             --th-h: 40px;
-            --c-M: #026bfe; --t-M: #ffffff; --b-M: #bae6fd;
-            --c-P: #56a2ff; --t-P: #ffffff; --b-P: #c7d2fe;
-            --c-N: #003785; --t-N: #ffffff; --b-N: #c7d2fe;
-            --c-R: #ecfdf5; --t-R: #059669; --b-R: #6ee7b7;
-            --c-SM: #10004f; --t-SM: #ffffff; --b-SM: #cbd5e1;
-            --bg-ferie: #ff782ff6; --t-ferie: #ffffff; --b-ferie: #a15300;
-            --bg-rec: #d00173; --t-rec: #ffe8f2; --b-rec: #c3006b;
-            --bg-cong: #ffea00; --t-cong: #000000; --b-cong: #fbff00;
-            --bg-mal: #ef4444; --t-mal: #ffffff; --b-mal: #b91c1c;
-            --bg-nl: #e0f7fa; --t-nl: #006064; --b-nl: #b2ebf2;
-            --bg-perm: #00e749; --t-perm: #000000; --b-perm: #004e1c;
-            --bg-ng: #00bfff; --t-ng: #ffffff; --b-ng: #0099cc;
-            --bg-stu: #3b82f6; --t-stu: #ffffff; --b-stu: #1d4ed8;
-            --bg-pn: #14532d; --t-pn: #ffffff; --b-pn: #052e16;
-            --bg-coord: #ffffff; --t-coord: #ff0000; --b-coord: #ff0000;
-            --month-bar-bg: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            --c-M: #0257d5; --t-M: #ffffff; --b-M: #bae6fd;
+            --c-P: #3f7fe0; --t-P: #ffffff; --b-P: #c7d2fe;
+            --c-N: #002a66; --t-N: #ffffff; --b-N: #c7d2fe;
+            --c-R: #ecfdf5; --t-R: #047857; --b-R: #6ee7b7;
+            --c-SM: #0b0038; --t-SM: #ffffff; --b-SM: #cbd5e1;
+            --bg-ferie: #e2670f; --t-ferie: #ffffff; --b-ferie: #a15300;
+            --bg-rec: #b3005f; --t-rec: #ffe8f2; --b-rec: #c3006b;
+            --bg-cong: #e0c700; --t-cong: #000000; --b-cong: #fbff00;
+            --bg-mal: #dc2626; --t-mal: #ffffff; --b-mal: #b91c1c;
+            --bg-nl: #cceef2; --t-nl: #004147; --b-nl: #b2ebf2;
+            --bg-perm: #00c440; --t-perm: #00250e; --b-perm: #004e1c;
+            --bg-ng: #009fd6; --t-ng: #ffffff; --b-ng: #0099cc;
+            --bg-stu: #2f6fe0; --t-stu: #ffffff; --b-stu: #1d4ed8;
+            --bg-pn: #0f3d21; --t-pn: #ffffff; --b-pn: #052e16;
+            --bg-coord: #ffffff; --t-coord: #dc0000; --b-coord: #dc0000;
+            --month-bar-bg: linear-gradient(135deg, #0f2a63 0%, #1d4ed8 100%);
             --shadow-soft: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
         }
         body.dark-mode {
-            --bg: #0f172a; --bg-card: #1e293b; --text-main: #f1f5f9;
-            --text-sec: #94a3b8; --border: #334155; --header-bg: rgba(15,23,42,0.85);
+            --bg: #080d18; --bg-card: #131b2a; --text-main: #eef2f8;
+            --text-sec: #8592ac; --border: #22304a; --header-bg: rgba(8,13,24,0.9);
         }
         body {
-            font-family: 'Inter', sans-serif; background: var(--bg); margin: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif; margin: 0;
+            background: radial-gradient(circle at 15% 0%, rgba(37,99,235,0.05), transparent 40%),
+                        radial-gradient(circle at 100% 15%, rgba(30,58,138,0.04), transparent 45%),
+                        var(--bg);
+            background-attachment: fixed;
             padding-top: var(--header-h); color: var(--text-main);
-            transition: background 0.3s ease, color 0.3s ease; overscroll-behavior-y: none;
+            transition: background-color 0.3s ease, color 0.3s ease; overscroll-behavior-y: none;
         }
         header {
             position: fixed; top: 0; left: 0; right: 0; background: var(--header-bg);
             z-index: 1000; height: var(--header-h); display: flex; flex-direction: column;
             padding-top: var(--safe-top); backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.08);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 1px 0 rgba(37,99,235,0.12), 0 6px 24px rgba(15,23,42,0.05);
             transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
         }
         .header-main {
@@ -72,14 +80,15 @@
         .app-brand { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
         .app-brand img { width: 44px; height: 44px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; }
         .brand-text { display: flex; flex-direction: column; min-width: 0; justify-content: center; }
-        .github-lbl {
-            font-size: 0.65rem; color: var(--text-sec); text-transform: uppercase;
-            font-weight: 800; letter-spacing: 0.5px; display: flex; align-items: center;
-            gap: 4px; margin-bottom: 2px;
+        .app-title-text {
+            font-size: 1.15rem; font-weight: 900; letter-spacing: 1px; color: var(--text-main);
+            line-height: 1.1; white-space: nowrap;
+            background: linear-gradient(135deg, var(--text-main), var(--primary));
+            -webkit-background-clip: text; background-clip: text; color: transparent;
         }
-        #last-update-badge {
-            font-size: 0.95rem; font-weight: 800; color: var(--text-main);
-            line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        .app-subtitle-text {
+            font-size: 0.62rem; font-weight: 800; color: var(--text-sec); letter-spacing: 2.5px;
+            text-transform: uppercase; margin-top: 1px;
         }
         .app-actions { display: flex; align-items: center; gap: 6px; position: relative; }
         .expandable-actions {
@@ -94,10 +103,11 @@
             width: 38px; height: 38px; border-radius: 50%; border: none;
             background: var(--bg-card); color: var(--text-main); display: flex;
             align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05); border: 1px solid var(--border); flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(15,23,42,0.08); border: 1px solid var(--border); flex-shrink: 0;
         }
         .action-circle:active { transform: scale(0.9); background: var(--bg); }
         .action-circle .material-icons-round { font-size: 20px; }
+        .action-circle.driver-filter-btn { background: linear-gradient(145deg, var(--bg-card), var(--bg)); color: var(--primary); border-color: rgba(37,99,235,0.25); }
         .action-circle-as {
             width: 38px; height: 38px; border-radius: 50%; border: none;
             background: var(--primary); color: white; font-weight: 800; font-size: 0.85rem;
@@ -120,25 +130,43 @@
         #menu-dropdown.open { display: flex; animation: scaleIn 0.2s cubic-bezier(0.175,0.885,0.32,1.275); }
         .menu-item {
             padding: 16px 20px; display: flex; align-items: center; gap: 12px;
-            font-weight: 600; color: var(--text-main); border-bottom: 1px solid var(--border);
+            font-weight: 600; color: var(--text-main);
+            background-image: linear-gradient(to right, transparent, var(--border) 12%, var(--border) 88%, transparent);
+            background-position: bottom; background-repeat: no-repeat; background-size: 100% 1px;
             cursor: pointer; transition: 0.2s;
         }
-        .menu-item:last-child { border-bottom: none; }
-        .menu-item:active { background: var(--bg); }
+        .menu-item:last-child { background-image: none; }
+        .menu-item:active { background-color: var(--bg); }
         .menu-item span { color: var(--primary); }
         @keyframes scaleIn { from { opacity:0; transform:scale(0.9); } to { opacity:1; transform:scale(1); } }
-        .driver-scroller {
-            flex: 1; display: flex; gap: 8px; overflow-x: auto; padding: 0 16px;
-            align-items: center; scrollbar-width: none; -webkit-overflow-scrolling: touch;
-            border-top: 1px solid var(--border); height: 50px;
+
+        /* ── Selettore Operatori (dropdown 3 colonne) ────────────────────── */
+        #driver-filter-dropdown {
+            position: fixed; top: calc(var(--header-h) + 8px); left: 12px; right: 12px; background: var(--bg-card);
+            border-radius: 20px; box-shadow: 0 14px 44px rgba(8,13,24,0.25); border: 1px solid var(--border);
+            display: none; z-index: 5000; max-height: 65vh; overflow-y: auto; padding: 16px;
+            transform-origin: top center;
         }
+        #driver-filter-dropdown.open { display: block; animation: scaleIn 0.2s cubic-bezier(0.175,0.885,0.32,1.275); }
+        .driver-filter-title { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-sec); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        .driver-filter-all-btn {
+            padding: 12px; border-radius: 12px; background: var(--bg); border: 1.5px solid var(--border);
+            color: var(--text-sec); text-align: center; font-weight: 800; font-size: 0.78rem; cursor: pointer;
+            margin-bottom: 10px; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .driver-filter-all-btn.active { background: linear-gradient(135deg,#1e3a8a,#2563eb); color: #fff; border-color: transparent; box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+        .driver-filter-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+        .driver-filter-chip {
+            padding: 12px 4px; border-radius: 12px; background: var(--bg); border: 1.5px solid var(--border);
+            text-align: center; font-size: 0.72rem; font-weight: 700; color: var(--text-sec); cursor: pointer;
+            transition: 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .driver-filter-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 3px 10px rgba(37,99,235,0.3); transform: scale(1.02); }
         .chip {
             padding: 8px 14px; border-radius: 12px; font-size: 0.8rem; font-weight: 700;
             white-space: nowrap; cursor: pointer; transition: all 0.2s ease;
             display: flex; align-items: center; justify-content: center;
         }
-        .chip-driver { background: var(--bg); color: var(--text-sec); border: 1px solid var(--border); }
-        .chip-driver.active { background: var(--text-main); color: var(--bg-card); border-color: var(--text-main); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .container { padding: 0; max-width: 100%; margin: 0 auto; padding-bottom: 80px; }
         table { width: 100%; border-collapse: separate; border-spacing: 0; }
         thead th {
@@ -148,6 +176,10 @@
             border-bottom: 1px solid var(--border); text-align: center; min-width: 115px;
             height: var(--th-h); backdrop-filter: blur(5px);
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        thead th:not(:first-child)::before {
+            content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+            width: 2px; height: 16px; border-radius: 2px; background: var(--primary); opacity: 0.35;
         }
         thead th:first-child, .td-date {
             width: 60px !important; min-width: 60px !important; max-width: 60px !important;
@@ -166,11 +198,17 @@
         }
         .month-label { font-weight: 900; font-size: 1.4rem; text-transform: uppercase; letter-spacing: -0.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         .live-clock {
-            font-variant-numeric: tabular-nums; font-weight: 800; font-size: 1rem;
-            background: rgba(0,0,0,0.25); padding: 2px 10px; border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.1); letter-spacing: 0.5px;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            display: inline-flex; align-items: center; gap: 7px;
+            font-variant-numeric: tabular-nums; font-weight: 800; font-size: 0.92rem;
+            background: rgba(255,255,255,0.14); padding: 5px 13px; border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2); letter-spacing: 0.3px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.12); text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            backdrop-filter: blur(6px);
         }
+        .live-clock .material-icons-round { font-size: 13px; opacity: 0.85; }
+        .live-clock .lc-date { opacity: 0.9; }
+        .live-clock .lc-time { font-weight: 900; }
+        .live-clock .lc-sec { opacity: 0.6; font-weight: 700; margin-left: 1px; }
         tbody td {
             padding: 2px; height: var(--cell-h); vertical-align: middle;
             border-bottom: 1px solid var(--border); border-right: 1px dashed var(--border);
@@ -268,21 +306,53 @@
         body.dark-mode tr.today .td-date { background: #431407; color: #fdba74; }
 
         /* LOADER */
-        #loader { position:fixed; inset:0; background:var(--bg); z-index:9999; display:flex; align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:20px; }
+        #loader {
+            position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center;
+            flex-direction:column; text-align:center; padding:20px;
+            background: radial-gradient(circle at 30% 20%, rgba(37,99,235,0.15), transparent 55%),
+                        radial-gradient(circle at 80% 80%, rgba(30,58,138,0.18), transparent 55%),
+                        var(--bg);
+            transition: opacity 0.5s ease;
+        }
         .spinner { border:4px solid #f3f3f3; border-top:4px solid var(--primary); border-radius:50%; width:40px; height:40px; animation:spin 0.8s cubic-bezier(0.68,-0.55,0.27,1.55) infinite; margin-bottom:20px; }
         @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+        #auto-loader { display:none; }
         #manual-upload { display:none; margin-top:20px; }
         .file-label { background:var(--primary); color:white; padding:12px 24px; border-radius:12px; font-weight:bold; cursor:pointer; font-size:0.95rem; display:inline-flex; align-items:center; gap:8px; margin-top:15px; box-shadow:0 4px 15px rgba(37,99,235,0.4); transition:transform 0.2s; }
         .file-label:active { transform:scale(0.96); }
         input[type="file"] { display:none; }
+        #splash-brand { display:flex; flex-direction:column; align-items:center; }
+        .splash-icon-ring {
+            width:88px; height:88px; border-radius:26px; background:linear-gradient(135deg,#1e3a8a,#2563eb);
+            display:flex; align-items:center; justify-content:center; margin-bottom:22px;
+            box-shadow:0 14px 40px rgba(37,99,235,0.4); animation:splashPop 0.6s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .splash-icon-ring .material-icons-round { font-size:44px; color:#fff; }
+        .splash-title {
+            font-size:2.6rem; font-weight:900; letter-spacing:3px; margin:0;
+            background:linear-gradient(135deg,#1e3a8a,#2563eb,#60a5fa);
+            -webkit-background-clip:text; background-clip:text; color:transparent;
+            animation:splashPop 0.7s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .splash-sub {
+            margin-top:8px; font-size:0.8rem; font-weight:800; letter-spacing:5px; color:var(--text-sec);
+            text-transform:uppercase; opacity:0; animation:splashFadeIn 0.6s ease 0.25s forwards;
+        }
+        .splash-dots { display:flex; gap:6px; margin-top:28px; opacity:0; animation:splashFadeIn 0.6s ease 0.4s forwards; }
+        .splash-dots span { width:7px; height:7px; border-radius:50%; background:var(--primary); animation:splashDotPulse 1.2s ease-in-out infinite; }
+        .splash-dots span:nth-child(2) { animation-delay:0.15s; }
+        .splash-dots span:nth-child(3) { animation-delay:0.3s; }
+        @keyframes splashPop { from{opacity:0; transform:scale(0.6) translateY(10px);} to{opacity:1; transform:scale(1) translateY(0);} }
+        @keyframes splashFadeIn { to{opacity:1;} }
+        @keyframes splashDotPulse { 0%,100%{opacity:0.25; transform:scale(0.8);} 50%{opacity:1; transform:scale(1.15);} }
 
         /* MODALI */
-        #shift-modal,#dinner-modal,#options-modal,#notif-center-modal,#month-select-modal,#wheel-modal {
+        #shift-modal,#dinner-modal,#options-modal,#notif-center-modal,#wheel-modal {
             display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:3000;
             backdrop-filter:blur(8px); align-items:flex-end; justify-content:center;
             opacity:0; transition:opacity 0.3s;
         }
-        #shift-modal.open,#dinner-modal.open,#options-modal.open,#notif-center-modal.open,#month-select-modal.open,#wheel-modal.open { opacity:1; }
+        #shift-modal.open,#dinner-modal.open,#options-modal.open,#notif-center-modal.open,#wheel-modal.open { opacity:1; }
         .modal-content {
             background:var(--bg-card); width:100%; max-width:600px; border-radius:24px 24px 0 0;
             box-shadow:0 -10px 40px rgba(0,0,0,0.3); overflow:hidden;
@@ -291,15 +361,30 @@
         }
         #shift-modal.open .modal-content,#dinner-modal.open .modal-content,
         #options-modal.open .modal-content,#notif-center-modal.open .modal-content,
-        #month-select-modal.open .modal-content,#wheel-modal.open .modal-content { transform:translateY(0); }
+        #wheel-modal.open .modal-content { transform:translateY(0); }
         .modal-header { background:var(--bg); color:var(--text-main); padding:20px 24px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); }
         .header-text h3 { margin:0; font-size:1.3rem; font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:10px; }
         .header-text span { display:block; font-size:0.9rem; font-weight:600; color:var(--text-sec); margin-top:4px; }
         .btn-close-modal { background:var(--bg); border:none; color:var(--text-sec); cursor:pointer; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:0.2s; }
         .modal-body { padding:0; overflow-y:auto; -webkit-overflow-scrolling:touch; }
-        .month-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:20px; }
-        .month-btn { aspect-ratio:2/1; background:var(--bg); border:1px solid var(--border); border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:800; color:var(--text-main); font-size:0.9rem; cursor:pointer; text-transform:uppercase; transition:0.2s; box-shadow:0 2px 5px rgba(0,0,0,0.05); }
-        .month-btn:active { transform:scale(0.96); background:var(--bg-card); }
+        #month-select-dropdown {
+            position: fixed; top: calc(var(--header-h) + 8px); left: 12px; right: 12px; background: var(--bg-card);
+            border-radius: 20px; box-shadow: 0 14px 44px rgba(8,13,24,0.25); border: 1px solid var(--border);
+            display: none; z-index: 5000; max-height: 65vh; overflow-y: auto; padding: 16px;
+            transform-origin: top center;
+        }
+        #month-select-dropdown.open { display: block; animation: scaleIn 0.2s cubic-bezier(0.175,0.885,0.32,1.275); }
+        .month-grid { display:flex; flex-direction:column; gap:6px; }
+        .month-btn {
+            width:100%; background:var(--bg); border:1px solid var(--border); border-radius:12px;
+            display:flex; align-items:center; gap:10px; padding:12px 16px;
+            font-weight:800; color:var(--text-main); font-size:0.85rem; cursor:pointer;
+            transition:0.2s; box-shadow:0 1px 3px rgba(0,0,0,0.04);
+        }
+        .month-btn .material-icons-round { font-size:17px; color:var(--primary); flex-shrink:0; }
+        .month-btn:active { transform:scale(0.98); background:var(--bg-card); border-color:var(--primary); }
+        .month-btn.month-current { background:linear-gradient(135deg, rgba(29,78,216,0.1), rgba(29,78,216,0.03)); border-color:rgba(29,78,216,0.3); }
+        .month-btn.month-current .material-icons-round { color:var(--primary); }
         .modal-section-title { padding:16px 20px 8px 20px; font-size:0.75rem; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--text-sec); display:flex; align-items:center; gap:8px; background:var(--bg); position:sticky; top:0; z-index:5; border-bottom:1px solid var(--border); }
         .colleague-card { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; background:var(--bg-card); border-bottom:1px solid var(--border); transition:background 0.2s; }
         .colleague-card:last-child { border-bottom:none; }
@@ -315,8 +400,123 @@
         .modal-theme-N .modal-header { background:linear-gradient(135deg,#1e293b,#0f172a); } .modal-theme-N .header-text h3 { color:white; } .modal-theme-N .header-text span { color:#94a3b8; } .modal-theme-N .btn-close-modal { background:#334155; color:white; }
         .modal-theme-R .modal-header { background:linear-gradient(135deg,#dcfce7,#ecfdf5); } .modal-theme-R .header-text h3 { color:#064e3b; }
         .modal-theme-SM .modal-header { background:linear-gradient(135deg,#64748b,#94a3b8); } .modal-theme-SM .header-text h3 { color:white; }
-        .option-item { padding:20px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); font-weight:600; color:var(--text-main); }
+        .option-item {
+            padding:18px 20px; display:flex; justify-content:space-between; align-items:center;
+            font-weight:600; color:var(--text-main);
+            background-image: linear-gradient(to right, transparent, var(--border) 10%, var(--border) 90%, transparent);
+            background-position: bottom; background-repeat: no-repeat; background-size: 100% 1px;
+        }
+        .option-item:last-child { background-image:none; }
+        .option-category-header {
+            padding:18px 20px 8px; display:flex; align-items:center; gap:8px;
+            font-size:0.72rem; font-weight:800; text-transform:uppercase; letter-spacing:1px;
+            color:var(--primary); background:linear-gradient(180deg, rgba(37,99,235,0.06), transparent);
+        }
+        .option-category-header .material-icons-round { font-size:15px; }
+        .option-category-header:not(:first-child) { margin-top:6px; border-top:1px solid var(--border); }
+        .option-identity-badge {
+            display:flex; align-items:center; gap:10px; padding:14px 20px 4px;
+        }
+        .option-identity-avatar { width:38px; height:38px; border-radius:11px; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.9rem; flex-shrink:0; }
+        .btn-change-identity { background:var(--bg); border:1.5px solid var(--border); color:var(--primary); font-weight:800; font-size:0.72rem; padding:8px 12px; border-radius:10px; cursor:pointer; display:flex; align-items:center; gap:4px; }
+        .info-clock-card {
+            background: linear-gradient(135deg, rgba(29,78,216,0.1), rgba(29,78,216,0.02));
+            border: 1px solid rgba(29,78,216,0.18); border-radius:18px; padding:20px; text-align:center;
+            margin:14px 20px;
+        }
+        .live-clock-date { font-size:0.72rem; font-weight:800; color:var(--text-sec); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:8px; }
+        .live-clock-time { font-size:2.1rem; font-weight:900; color:var(--primary); font-variant-numeric:tabular-nums; letter-spacing:0.5px; }
+        .live-clock-time .clock-seconds { font-size:1.15rem; opacity:0.55; font-weight:800; }
+        .info-update-card { display:flex; align-items:center; gap:12px; background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:14px 16px; margin:0 20px 20px; }
+        .info-update-card .material-icons-round { color:var(--primary); font-size:22px; flex-shrink:0; }
         .option-item:last-child { border-bottom:none; }
+
+        /* ── ADMIN PANEL ────────────────────────────────────────────────── */
+        #admin-login-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9500; align-items:center; justify-content:center; opacity:0; transition:opacity 0.3s; padding:20px; }
+        #admin-login-modal.open { opacity:1; }
+        #admin-login-modal .alert-card { transform:scale(0.9); }
+        #admin-login-modal.open .alert-card { transform:scale(1); }
+        .admin-login-input { width:100%; padding:14px 16px; border-radius:12px; border:1.5px solid var(--border); background:var(--bg); color:var(--text-main); font-size:1rem; font-weight:700; letter-spacing:1px; margin-bottom:10px; }
+        .admin-login-error { color:#dc2626; font-size:0.8rem; font-weight:700; margin-bottom:8px; min-height:16px; }
+        #admin-panel-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:6000; backdrop-filter:blur(8px); align-items:flex-end; justify-content:center; opacity:0; transition:opacity 0.3s; }
+        #admin-panel-modal.open { opacity:1; }
+        #admin-panel-modal .modal-content { max-width:680px; max-height:92vh; }
+        #admin-panel-modal.open .modal-content { transform:translateY(0); }
+        .admin-header-badge { background:#0f172a; color:#fff; }
+        .admin-header-badge .header-text span { color:#94a3b8; }
+        .admin-header-badge .btn-close-modal { background:#1e293b; color:#fff; }
+        .admin-tabs { display:flex; gap:6px; padding:12px 16px; overflow-x:auto; scrollbar-width:none; background:var(--bg); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:5; }
+        .admin-tab-btn { flex-shrink:0; padding:9px 16px; border-radius:10px; border:1.5px solid var(--border); background:var(--bg-card); color:var(--text-sec); font-weight:800; font-size:0.78rem; cursor:pointer; display:flex; align-items:center; gap:6px; transition:0.2s; white-space:nowrap; }
+        .admin-tab-btn .material-icons-round { font-size:16px; }
+        .admin-tab-btn.active { background:var(--primary); border-color:var(--primary); color:#fff; box-shadow:0 3px 8px rgba(37,99,235,0.3); }
+        .admin-tab-panel { display:none; padding:18px; }
+        .admin-tab-panel.active { display:block; }
+        .admin-section-label { font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-sec); margin:18px 0 10px; display:flex; align-items:center; gap:6px; }
+        .admin-section-label:first-child { margin-top:0; }
+        .admin-stat-row { display:flex; gap:10px; margin-bottom:16px; }
+        .admin-stat-box { flex:1; background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:14px; text-align:center; }
+        .admin-stat-num { font-size:1.5rem; font-weight:900; color:var(--primary); line-height:1; }
+        .admin-stat-lbl { font-size:0.65rem; font-weight:700; color:var(--text-sec); text-transform:uppercase; letter-spacing:0.4px; margin-top:4px; }
+        .access-row { background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:0.2s; }
+        .access-row:active { transform:scale(0.98); background:var(--bg-card); }
+        .access-dot { width:10px; height:10px; border-radius:50%; background:#94a3b8; flex-shrink:0; box-shadow:0 0 0 3px rgba(148,163,184,0.15); }
+        .access-dot.online { background:#22c55e; box-shadow:0 0 0 3px rgba(34,197,94,0.2); }
+        .access-info { flex:1; min-width:0; }
+        .access-device { font-weight:800; font-size:0.88rem; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .access-view { font-size:0.75rem; color:var(--primary); font-weight:700; margin-top:2px; }
+        .access-meta { font-size:0.7rem; color:var(--text-sec); margin-top:3px; }
+        .access-duration { text-align:right; flex-shrink:0; display:flex; align-items:center; gap:6px; }
+        .access-duration-inner b { font-size:0.9rem; color:var(--text-main); display:block; }
+        .access-duration-inner span { font-size:0.62rem; color:var(--text-sec); text-transform:uppercase; font-weight:700; }
+        .access-chevron { color:var(--text-sec); font-size:20px !important; }
+        .admin-empty { text-align:center; padding:40px 20px; color:var(--text-sec); }
+        .admin-empty .material-icons-round { font-size:40px; opacity:0.4; margin-bottom:8px; }
+        #access-detail-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:6500; backdrop-filter:blur(8px); align-items:flex-end; justify-content:center; opacity:0; transition:opacity 0.3s; }
+        #access-detail-modal.open { opacity:1; }
+        #access-detail-modal .modal-content { max-width:520px; }
+        #access-detail-modal.open .modal-content { transform:translateY(0); }
+        .access-detail-hero { display:flex; align-items:center; gap:14px; padding:20px; background:linear-gradient(135deg, rgba(29,78,216,0.08), transparent); }
+        .access-detail-avatar { width:52px; height:52px; border-radius:15px; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.2rem; flex-shrink:0; }
+        .access-detail-status-pill { display:inline-flex; align-items:center; gap:5px; font-size:0.68rem; font-weight:800; text-transform:uppercase; padding:3px 9px; border-radius:20px; margin-top:4px; background:var(--bg); color:var(--text-sec); }
+        .access-detail-status-pill.online { background:rgba(34,197,94,0.15); color:#16a34a; }
+        .access-detail-stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 20px 16px; }
+        .access-detail-stat-box { background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px 14px; }
+        .access-detail-stat-box span { font-size:0.65rem; font-weight:800; color:var(--text-sec); text-transform:uppercase; display:block; margin-bottom:3px; }
+        .access-detail-stat-box b { font-size:0.85rem; color:var(--text-main); }
+        .history-item { display:flex; align-items:center; gap:12px; padding:12px 20px; background-image: linear-gradient(to right, transparent, var(--border) 10%, var(--border) 90%, transparent); background-position: bottom; background-repeat: no-repeat; background-size: 100% 1px; }
+        .history-item:last-child { background-image:none; }
+        .history-item-text { display:flex; flex-direction:column; }
+        .history-item-text b { font-size:0.82rem; color:var(--text-main); font-weight:700; }
+        .history-item-text span { font-size:0.7rem; color:var(--text-sec); margin-top:2px; }
+        .color-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+        .color-item { display:flex; align-items:center; gap:10px; background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:10px 12px; }
+        .color-item input[type=color] { width:34px; height:34px; border:none; border-radius:8px; padding:0; background:none; cursor:pointer; flex-shrink:0; }
+        .color-item label { font-size:0.75rem; font-weight:700; color:var(--text-main); line-height:1.2; }
+        .admin-field-row { display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:10px 14px; margin-bottom:8px; }
+        .admin-field-row label { font-size:0.82rem; font-weight:700; color:var(--text-main); flex-shrink:0; }
+        .admin-field-row input[type=text] { flex:1; min-width:0; text-align:right; border:none; background:none; color:var(--text-main); font-weight:700; font-size:0.85rem; padding:6px; }
+        .btn-admin-save { width:100%; padding:14px; border-radius:14px; border:none; background:var(--primary); color:#fff; font-weight:800; font-size:0.95rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 12px rgba(37,99,235,0.3); margin-top:16px; }
+        .btn-admin-save:active { transform:scale(0.98); }
+        .btn-admin-secondary { width:100%; padding:12px; border-radius:14px; border:1.5px solid var(--border); background:var(--bg-card); color:var(--text-sec); font-weight:700; font-size:0.85rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; margin-top:8px; }
+        .btn-admin-danger { color:#dc2626; border-color:#fecaca; }
+        .admin-save-toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:#0f172a; color:#fff; padding:12px 20px; border-radius:12px; font-weight:700; font-size:0.85rem; display:flex; align-items:center; gap:8px; z-index:9999; opacity:0; transition:all 0.3s; pointer-events:none; box-shadow:0 8px 24px rgba(0,0,0,0.3); }
+        .admin-save-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+        .admin-save-toast .material-icons-round { color:#22c55e; font-size:18px; }
+        .admin-textarea { width:100%; min-height:110px; border-radius:12px; border:1.5px solid var(--border); background:var(--bg); color:var(--text-main); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; padding:12px 14px; resize:vertical; line-height:1.5; }
+        .admin-text-input { width:100%; border-radius:12px; border:1.5px solid var(--border); background:var(--bg); color:var(--text-main); font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:0.9rem; padding:12px 14px; }
+        .admin-toggle-row { display:flex; align-items:center; justify-content:space-between; background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px 16px; margin-bottom:14px; }
+        .admin-toggle-row span { font-weight:700; font-size:0.85rem; color:var(--text-main); }
+        .announce-card { background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:12px; }
+        .announce-card-head { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+        .announce-card-head select { flex-shrink:0; border-radius:8px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-main); font-size:0.8rem; padding:6px 8px; }
+        .announce-card-head input[type=text] { flex:1; min-width:0; border-radius:8px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-main); font-weight:700; font-size:0.85rem; padding:8px 10px; }
+        .announce-remove-btn { flex-shrink:0; width:32px; height:32px; border-radius:8px; border:none; background:#fee2e2; color:#dc2626; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+        .announce-toggle-inline { display:flex; align-items:center; gap:8px; margin-top:10px; font-size:0.75rem; font-weight:700; color:var(--text-sec); }
+        .btn-admin-add { width:100%; padding:12px; border-radius:12px; border:1.5px dashed var(--primary); background:transparent; color:var(--primary); font-weight:800; font-size:0.85rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:14px; }
+        .export-info-box { background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:16px; font-size:0.82rem; color:var(--text-sec); line-height:1.6; margin-bottom:16px; }
+        .export-info-box b { color:var(--text-main); }
+        .btn-export { width:100%; padding:16px; border-radius:14px; border:none; background:linear-gradient(135deg,#059669,#10b981); color:#fff; font-weight:800; font-size:0.95rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 14px rgba(5,150,105,0.35); }
+        .btn-export:active { transform:scale(0.98); }
         .switch { position:relative; display:inline-block; width:50px; height:28px; }
         .switch input { opacity:0; width:0; height:0; }
         .slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:var(--border); transition:.4s; border-radius:34px; }
@@ -412,6 +612,37 @@
         #welcome-modal.open { opacity:1; }
         #welcome-modal .alert-card { transform:scale(0.85); transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275); }
         #welcome-modal.open .alert-card { transform:scale(1); }
+        .welcome-progress-track { height:4px; background:rgba(220,38,38,0.15); margin:0 24px 22px; border-radius:4px; overflow:hidden; }
+        .welcome-progress-bar { height:100%; width:100%; background:#dc2626; border-radius:4px; transform:scaleX(1); transform-origin:left; }
+        .welcome-progress-bar.counting { animation-name: welcomeCountdown; animation-duration: 3s; animation-timing-function: linear; animation-fill-mode: forwards; }
+        @keyframes welcomeCountdown { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+        #custom-announce-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:10000; align-items:center; justify-content:center; opacity:0; transition:opacity 0.4s ease; padding:20px; }
+        #custom-announce-modal.open { opacity:1; }
+        #custom-announce-modal .alert-card { transform:scale(0.85); transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275); }
+        #custom-announce-modal.open .alert-card { transform:scale(1); }
+        #identity-info-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:10400; align-items:center; justify-content:center; opacity:0; transition:opacity 0.4s ease; padding:20px; }
+        #identity-info-modal.open { opacity:1; }
+        #identity-info-modal .alert-card { transform:scale(0.85); transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275); }
+        #identity-info-modal.open .alert-card { transform:scale(1); }
+        #identity-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:10500; align-items:center; justify-content:center; opacity:0; transition:opacity 0.4s ease; padding:20px; }
+        #identity-modal.open { opacity:1; }
+        #identity-modal .identity-card { background:var(--bg-card); width:100%; max-width:420px; max-height:88vh; border-radius:24px; box-shadow:0 20px 60px rgba(0,0,0,0.5); overflow:hidden; transform:scale(0.9); transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275); border:1px solid var(--border); display:flex; flex-direction:column; }
+        #identity-modal.open .identity-card { transform:scale(1); }
+        .identity-header { padding:24px 24px 16px; text-align:center; background:linear-gradient(135deg,#0f2a63,#1d4ed8); }
+        .identity-header .material-icons-round { font-size:36px; color:#fff; margin-bottom:8px; }
+        .identity-header h3 { margin:0; color:#fff; font-size:1.2rem; font-weight:800; }
+        .identity-header span { display:block; color:#bfdbfe; font-size:0.8rem; font-weight:600; margin-top:4px; }
+        .identity-list { padding:14px; overflow-y:auto; display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+        .identity-btn { display:flex; flex-direction:column; align-items:center; gap:6px; padding:10px 4px; border-radius:14px; border:1.5px solid var(--border); background:var(--bg); cursor:pointer; transition:0.2s; }
+        .identity-btn:active { transform:scale(0.95); }
+        .identity-avatar { width:36px; height:36px; border-radius:10px; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.85rem; }
+        .identity-name { font-size:0.68rem; font-weight:800; color:var(--text-main); text-align:center; line-height:1.15; word-break:break-word; }
+        .identity-btn.guest-btn .identity-avatar { background:#6b7896; }
+        .identity-btn.locked { opacity:0.55; cursor:not-allowed; pointer-events:none; background:transparent; }
+        .identity-btn.locked .identity-avatar { background:#a3adc2; }
+        .identity-btn.locked .identity-name { text-decoration:line-through; text-decoration-thickness:2px; color:var(--text-sec); }
+        .identity-lock-tag { font-size:0.55rem; font-weight:800; color:#dc2626; text-transform:uppercase; }
+        .identity-footer { padding:12px 20px 20px; text-align:center; font-size:0.72rem; color:var(--text-sec); }
         .graziella-icon { position:absolute; top:-8px; right:-8px; width:26px; height:26px; border-radius:50%; border:2px solid var(--bg-card); box-shadow:0 2px 5px rgba(0,0,0,0.3); z-index:10; background:#fff; object-fit:cover; cursor:pointer; transition:transform 0.2s; }
         .graziella-icon:active { transform:scale(0.85); }
         #graziella-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:11000; align-items:center; justify-content:center; opacity:0; transition:opacity 0.3s; padding:20px; cursor:pointer; }
@@ -433,23 +664,64 @@
     <img src="graziella.jpg" alt="Graziella" id="graziella-large-img">
 </div>
 
+<div id="identity-info-modal">
+    <div class="alert-card">
+        <div class="alert-header" style="background:#eff6ff;border-bottom:1px solid #dbeafe;">
+            <div class="alert-icon-box" style="color:#1d4ed8;border-color:#93c5fd;background:#ffffff;">
+                <span class="material-icons-round" style="font-size:28px;">notifications_active</span>
+            </div>
+            <div class="alert-title" style="color:#1e3a8a;">PERCHÉ CHIEDIAMO IL TUO NOME</div>
+        </div>
+        <div class="alert-body">
+            Selezionando il tuo nome potrai ricevere avvisi automatici su eventuali <b>spostamenti di turno</b>, variazioni di <b>reperibilità</b> e altre comunicazioni utili che ti riguardano da vicino.<br><br>
+            Se preferisci restare anonimo, puoi sempre scegliere <b>Ospite</b>.
+        </div>
+        <div class="alert-footer">
+            <button class="btn-alert-ok" style="background:#1d4ed8;box-shadow:0 4px 12px rgba(29,78,216,0.3);" onclick="closeIdentityInfoPopup()">
+                <span class="material-icons-round">arrow_forward</span> OK, CONTINUA
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="identity-modal">
+    <div class="identity-card">
+        <div class="identity-header">
+            <span class="material-icons-round">badge</span>
+            <h3>CHI SEI?</h3>
+            <span>Seleziona il tuo nome per continuare</span>
+        </div>
+        <div class="identity-list" id="identity-list-container"></div>
+        <div class="identity-footer">I nomi già in uso da un'altra persona connessa in questo momento sono disabilitati.</div>
+    </div>
+</div>
+
 <div id="welcome-modal">
     <div class="alert-card">
-        <div class="alert-header" style="background:#fef2f2;border-bottom:1px solid #fee2e2;">
+        <div class="alert-header" style="background:#fef2f2;border-bottom:1px solid #fee2e2;justify-content:center;flex-direction:column;text-align:center;gap:10px;">
             <div class="alert-icon-box" style="color:#dc2626;border-color:#fca5a5;background:#ffffff;">
                 <span class="material-icons-round" style="font-size:28px;">warning</span>
             </div>
-            <div class="alert-title" style="color:#991b1b;">ATTENZIONE</div>
+            <div class="alert-title" id="welcome-title-text" style="color:#991b1b;">ATTENZIONE</div>
         </div>
-        <div class="alert-body">
-            <span style="display:block;margin-bottom:12px;font-weight:800;color:#d97706;font-size:1.05rem;">
-                ⚠️ Questa è un'applicazione test in via di sviluppo.
-            </span>
-            È possibile che le ultime modifiche non siano ancora state aggiornate.<br><br>
-            <b style="color:#dc2626;">Fare riferimento sempre ai turni cartacei e al file Excel presenti in guardiola!</b>
+        <div class="alert-body" id="welcome-body-text" style="text-align:center;">
+            L'app viene aggiornata spesso.<br>In caso di dubbio, verifica sempre i turni cartacei in guardiola.
         </div>
+        <div class="welcome-progress-track"><div class="welcome-progress-bar" id="welcome-progress-bar"></div></div>
+    </div>
+</div>
+
+<div id="custom-announce-modal">
+    <div class="alert-card">
+        <div class="alert-header" style="background:#eff6ff;border-bottom:1px solid #dbeafe;">
+            <div class="alert-icon-box" style="color:#2563eb;border-color:#93c5fd;background:#ffffff;">
+                <span class="material-icons-round" id="announce-icon-el" style="font-size:28px;">campaign</span>
+            </div>
+            <div class="alert-title" id="announce-title-text" style="color:#1e3a8a;">AVVISO</div>
+        </div>
+        <div class="alert-body" id="announce-body-text"></div>
         <div class="alert-footer">
-            <button class="btn-alert-ok" style="background:#dc2626;box-shadow:0 4px 12px rgba(220,38,38,0.3);" onclick="closeWelcomeModal()">
+            <button class="btn-alert-ok" style="background:#2563eb;box-shadow:0 4px 12px rgba(37,99,235,0.3);" onclick="closeAnnounceModal()">
                 <span class="material-icons-round">done</span> HO CAPITO
             </button>
         </div>
@@ -493,21 +765,9 @@
     </div>
 </div>
 
-<div id="month-select-modal" onclick="closeMonthModal(event)">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <div class="modal-header">
-            <div class="header-text">
-                <h3><span class="material-icons-round" style="margin-right:10px">calendar_month</span> VAI AL MESE</h3>
-                <span>Selezione Rapida</span>
-            </div>
-            <button class="btn-close-modal" onclick="closeMonthModal()">
-                <span class="material-icons-round">close</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div class="month-grid" id="month-grid-container"></div>
-        </div>
-    </div>
+<div id="month-select-dropdown" onclick="event.stopPropagation()">
+    <div class="driver-filter-title"><span class="material-icons-round" style="font-size:14px">calendar_month</span> Vai al Mese</div>
+    <div class="month-grid" id="month-grid-container"></div>
 </div>
 
 <div id="loader">
@@ -515,6 +775,12 @@
         <div class="spinner"></div>
         <h3 style="color:var(--text-main);margin:0;font-size:1.1rem;font-weight:800">Inizializzazione...</h3>
         <p style="color:var(--text-sec);font-size:0.85rem;margin-top:8px">Lettura Turni 2026</p>
+    </div>
+    <div id="splash-brand">
+        <div class="splash-icon-ring"><span class="material-icons-round">local_hospital</span></div>
+        <h1 class="splash-title">INFERMIERI</h1>
+        <span class="splash-sub">2026</span>
+        <div class="splash-dots"><span></span><span></span><span></span></div>
     </div>
     <div id="manual-upload">
         <p style="color:#ef4444;font-weight:bold;font-size:1.1rem;margin-bottom:10px">⚠️ File automatico non trovato</p>
@@ -553,13 +819,37 @@
             </button>
         </div>
         <div class="modal-body" style="padding:0">
-            <div class="option-item" style="display:block">
-                <div style="margin-bottom:10px">
-                    <span style="font-size:1rem;font-weight:700">Monitoraggio Turni</span>
-                    <div style="font-size:0.8rem;color:var(--text-sec)">Seleziona chi seguire.</div>
+            <div class="option-category-header"><span class="material-icons-round">badge</span> Account</div>
+            <div class="option-identity-badge">
+                <div class="option-identity-avatar" id="options-identity-avatar">?</div>
+                <div style="flex:1;min-width:0;">
+                    <div style="font-weight:800;font-size:0.95rem;" id="options-identity-name">Non identificato</div>
+                    <div style="font-size:0.75rem;color:var(--text-sec);">Utente corrente</div>
                 </div>
-                <div id="notification-driver-list" class="dinner-checkbox-list" style="padding:0;grid-template-columns:1fr 1fr;"></div>
             </div>
+            <div class="option-item">
+                <div style="display:flex;flex-direction:column">
+                    <span style="font-size:1rem">Cambia Utente</span>
+                    <span style="font-size:0.8rem;color:var(--text-sec);font-weight:400">Non sei tu? Seleziona un altro nome</span>
+                </div>
+                <button class="btn-change-identity" onclick="closeOptionsModal();setTimeout(requestChangeIdentityDirect,220)">
+                    <span class="material-icons-round" style="font-size:16px">switch_account</span> CAMBIA
+                </button>
+            </div>
+
+            <div class="option-category-header"><span class="material-icons-round">palette</span> Aspetto</div>
+            <div class="option-item">
+                <div style="display:flex;flex-direction:column">
+                    <span style="font-size:1rem">Tema Scuro</span>
+                    <span style="font-size:0.8rem;color:var(--text-sec);font-weight:400">Riduci affaticamento occhi</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="option-category-header"><span class="material-icons-round">apps</span> Applicazione</div>
             <div class="option-item" id="install-container">
                 <div style="display:flex;flex-direction:column">
                     <span style="font-size:1rem">Installa Applicazione</span>
@@ -571,14 +861,200 @@
             </div>
             <div class="option-item">
                 <div style="display:flex;flex-direction:column">
-                    <span style="font-size:1rem">Tema Scuro</span>
-                    <span style="font-size:0.8rem;color:var(--text-sec);font-weight:400">Riduci affaticamento occhi</span>
+                    <span style="font-size:1rem">Aggiorna Dati</span>
+                    <span style="font-size:0.8rem;color:var(--text-sec);font-weight:400">Ricarica l'ultima versione dei turni</span>
                 </div>
-                <label class="switch">
-                    <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode()">
-                    <span class="slider"></span>
-                </label>
+                <button class="btn-change-identity" onclick="vibrate();location.reload()">
+                    <span class="material-icons-round" style="font-size:16px">refresh</span> RICARICA
+                </button>
             </div>
+
+            <div class="option-category-header"><span class="material-icons-round">info</span> Info</div>
+            <div class="info-clock-card">
+                <div class="live-clock-date" id="options-live-date">—</div>
+                <div class="live-clock-time"><span id="options-live-hm">--:--</span><span class="clock-seconds" id="options-live-s">:--</span></div>
+            </div>
+            <div class="info-update-card">
+                <span class="material-icons-round">update</span>
+                <div>
+                    <div style="font-weight:800;font-size:0.85rem;color:var(--text-main);">Ultimo Aggiornamento App</div>
+                    <div style="font-size:0.78rem;color:var(--text-sec);" id="options-last-update">Caricamento...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="admin-login-modal" onclick="closeAdminLoginModal(event)">
+    <div class="alert-card" onclick="event.stopPropagation()">
+        <div class="alert-header" style="background:#0f172a;border-bottom:1px solid #1e293b;">
+            <div class="alert-icon-box" style="color:#60a5fa;border-color:#334155;background:#1e293b;">
+                <span class="material-icons-round" style="font-size:28px;">lock</span>
+            </div>
+            <div class="alert-title" style="color:#fff;">AREA ADMIN</div>
+        </div>
+        <div class="alert-body">
+            <div style="margin-bottom:14px;color:var(--text-sec);font-size:0.9rem;">Inserisci la password per accedere al pannello di amministrazione.</div>
+            <input type="password" id="admin-pw-input" class="admin-login-input" placeholder="Password" onkeydown="if(event.key==='Enter')checkAdminPassword()">
+            <div class="admin-login-error" id="admin-pw-error"></div>
+        </div>
+        <div class="alert-footer">
+            <button class="btn-alert-ok" style="background:#0f172a;box-shadow:0 4px 12px rgba(15,23,42,0.3);" onclick="checkAdminPassword()">
+                <span class="material-icons-round">login</span> ACCEDI
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="admin-panel-modal" onclick="closeAdminPanel(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header admin-header-badge">
+            <div class="header-text">
+                <h3><span class="material-icons-round" style="margin-right:10px">admin_panel_settings</span> PANNELLO ADMIN</h3>
+                <span>Gestione e Configurazione App</span>
+            </div>
+            <button class="btn-close-modal" onclick="closeAdminPanel()">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        <div class="admin-tabs">
+            <button class="admin-tab-btn active" data-tab="accessi" onclick="switchAdminTab('accessi',this)"><span class="material-icons-round">insights</span> Accessi</button>
+            <button class="admin-tab-btn" data-tab="aspetto" onclick="switchAdminTab('aspetto',this)"><span class="material-icons-round">palette</span> Aspetto</button>
+            <button class="admin-tab-btn" data-tab="operatori" onclick="switchAdminTab('operatori',this)"><span class="material-icons-round">badge</span> Operatori</button>
+            <button class="admin-tab-btn" data-tab="turni" onclick="switchAdminTab('turni',this)"><span class="material-icons-round">schedule</span> Turni</button>
+            <button class="admin-tab-btn" data-tab="testi" onclick="switchAdminTab('testi',this)"><span class="material-icons-round">campaign</span> Testi</button>
+            <button class="admin-tab-btn" data-tab="esporta" onclick="switchAdminTab('esporta',this)"><span class="material-icons-round">file_download</span> Esporta</button>
+        </div>
+        <div class="modal-body" style="padding:0;">
+
+            <div class="admin-tab-panel active" id="admin-tab-accessi">
+                <div class="admin-stat-row">
+                    <div class="admin-stat-box"><div class="admin-stat-num" id="admin-stat-online">0</div><div class="admin-stat-lbl">Online Ora</div></div>
+                    <div class="admin-stat-box"><div class="admin-stat-num" id="admin-stat-total">0</div><div class="admin-stat-lbl">Accessi Totali</div></div>
+                </div>
+                <div class="admin-section-label"><span class="material-icons-round" style="font-size:14px">devices</span> Sessioni Recenti</div>
+                <div id="admin-access-list"></div>
+            </div>
+
+            <div class="admin-tab-panel" id="admin-tab-aspetto">
+                <div class="admin-section-label"><span class="material-icons-round" style="font-size:14px">brush</span> Colore Principale</div>
+                <div class="color-grid">
+                    <div class="color-item"><input type="color" id="col-primary" data-var="--primary"><label>Colore App (accento)</label></div>
+                </div>
+                <div class="admin-section-label"><span class="material-icons-round" style="font-size:14px">wb_sunny</span> Turni Base</div>
+                <div class="color-grid">
+                    <div class="color-item"><input type="color" id="col-c-M" data-var="--c-M"><label>Mattina (M)</label></div>
+                    <div class="color-item"><input type="color" id="col-c-P" data-var="--c-P"><label>Pomeriggio (P)</label></div>
+                    <div class="color-item"><input type="color" id="col-c-N" data-var="--c-N"><label>Notte (N)</label></div>
+                    <div class="color-item"><input type="color" id="col-c-R" data-var="--c-R"><label>Riposo (R)</label></div>
+                    <div class="color-item"><input type="color" id="col-c-SM" data-var="--c-SM"><label>Notturno Spec. (SM)</label></div>
+                </div>
+                <div class="admin-section-label"><span class="material-icons-round" style="font-size:14px">label</span> Codici Speciali</div>
+                <div class="color-grid">
+                    <div class="color-item"><input type="color" id="col-bg-ferie" data-var="--bg-ferie"><label>Ferie</label></div>
+                    <div class="color-item"><input type="color" id="col-bg-rec" data-var="--bg-rec"><label>Recupero</label></div>
+                    <div class="color-item"><input type="color" id="col-bg-cong" data-var="--bg-cong"><label>Congedo</label></div>
+                    <div class="color-item"><input type="color" id="col-bg-mal" data-var="--bg-mal"><label>Malattia</label></div>
+                    <div class="color-item"><input type="color" id="col-bg-nl" data-var="--bg-nl"><label>NL</label></div>
+                    <div class="color-item"><input type="color" id="col-bg-perm" data-var="--bg-perm"><label>Permesso</label></div>
+                    <div class="color-item"><input type="color" id="col-bg-ng" data-var="--bg-ng"><label>NG</label></div>
+                    <div class="color-item"><input type="color" id="col-bg-stu" data-var="--bg-stu"><label>Studio</label></div>
+                    <div class="color-item"><input type="color" id="col-bg-pn" data-var="--bg-pn"><label>Permesso Notte (PN)</label></div>
+                    <div class="color-item"><input type="color" id="col-bg-coord" data-var="--bg-coord"><label>Coordinatore</label></div>
+                </div>
+                <button class="btn-admin-save" onclick="saveAdminColors()"><span class="material-icons-round">save</span> SALVA COLORI (per tutti)</button>
+                <button class="btn-admin-secondary" onclick="resetAdminColors()"><span class="material-icons-round">restore</span> Ripristina colori predefiniti</button>
+            </div>
+
+            <div class="admin-tab-panel" id="admin-tab-operatori">
+                <div class="admin-section-label"><span class="material-icons-round" style="font-size:14px">people</span> Nomi Operatori</div>
+                <div style="font-size:0.8rem;color:var(--text-sec);margin-bottom:12px;">Il nome originale arriva dal file Excel. Puoi impostare un nome personalizzato mostrato nell'app: verrà applicato a tutti.</div>
+                <div id="admin-operators-list"></div>
+                <button class="btn-admin-save" onclick="saveAdminOperators()"><span class="material-icons-round">save</span> SALVA NOMI (per tutti)</button>
+            </div>
+
+            <div class="admin-tab-panel" id="admin-tab-turni">
+                <div class="admin-section-label"><span class="material-icons-round" style="font-size:14px">access_time</span> Orari Turni Standard</div>
+                <div class="admin-field-row"><label>Mattina (M)</label><input type="text" id="sch-M" data-key="M"></div>
+                <div class="admin-field-row"><label>Pomeriggio (P)</label><input type="text" id="sch-P" data-key="P"></div>
+                <div class="admin-field-row"><label>Notte (N)</label><input type="text" id="sch-N" data-key="N"></div>
+                <div class="admin-field-row"><label>Notturno Spec. (SM)</label><input type="text" id="sch-SM" data-key="SM"></div>
+                <div class="admin-field-row"><label>Riposo (R)</label><input type="text" id="sch-R" data-key="R"></div>
+                <div class="admin-section-label"><span class="material-icons-round" style="font-size:14px">wb_twilight</span> Orari Turni Diurni</div>
+                <div class="admin-field-row"><label>Mattina diurno (m)</label><input type="text" id="sch-m" data-key="m"></div>
+                <div class="admin-field-row"><label>Pomeriggio diurno (p)</label><input type="text" id="sch-p" data-key="p"></div>
+                <div class="admin-field-row"><label>Riposo diurno (r)</label><input type="text" id="sch-r" data-key="r"></div>
+                <button class="btn-admin-save" onclick="saveAdminSchedule()"><span class="material-icons-round">save</span> SALVA ORARI (per tutti)</button>
+            </div>
+
+            <div class="admin-tab-panel" id="admin-tab-testi">
+                <div class="admin-section-label"><span class="material-icons-round" style="font-size:14px">warning</span> Avviso Iniziale</div>
+                <div class="admin-toggle-row">
+                    <span>Mostra avviso all'avvio</span>
+                    <label class="switch">
+                        <input type="checkbox" id="welcome-active-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div style="margin-bottom:8px;font-size:0.72rem;font-weight:800;color:var(--text-sec);text-transform:uppercase;">Titolo</div>
+                <input type="text" id="admin-welcome-title" class="admin-text-input" placeholder="Es. ATTENZIONE" style="margin-bottom:12px;">
+                <div style="margin-bottom:8px;font-size:0.72rem;font-weight:800;color:var(--text-sec);text-transform:uppercase;">Testo (breve, si chiude da solo)</div>
+                <textarea id="admin-welcome-text" class="admin-textarea" placeholder="Testo dell'avviso..." style="min-height:70px;"></textarea>
+                <div class="admin-field-row" style="margin-top:12px;">
+                    <label><span class="material-icons-round" style="font-size:15px;vertical-align:-3px;margin-right:4px;">timer</span> Durata Chiusura Automatica</label>
+                    <input type="number" id="admin-welcome-duration" min="1" max="30" step="1" style="width:70px;text-align:right;border:none;background:none;color:var(--text-main);font-weight:800;font-size:0.9rem;"> <span style="color:var(--text-sec);font-weight:700;font-size:0.8rem;">sec</span>
+                </div>
+                <button class="btn-admin-save" onclick="saveAdminWelcome()"><span class="material-icons-round">save</span> SALVA AVVISO (per tutti)</button>
+
+                <div class="admin-section-label"><span class="material-icons-round" style="font-size:14px">post_add</span> Avvisi Aggiuntivi</div>
+                <div style="font-size:0.8rem;color:var(--text-sec);margin-bottom:12px;">Vengono mostrati in coda dopo l'avviso iniziale, uno alla volta, all'apertura dell'app.</div>
+                <div id="admin-announce-list"></div>
+                <button class="btn-admin-add" onclick="addAdminAnnouncement()"><span class="material-icons-round">add</span> AGGIUNGI NUOVO AVVISO</button>
+                <button class="btn-admin-save" onclick="saveAdminAnnouncements()"><span class="material-icons-round">save</span> SALVA AVVISI AGGIUNTIVI (per tutti)</button>
+            </div>
+
+            <div class="admin-tab-panel" id="admin-tab-esporta">
+                <div class="admin-section-label"><span class="material-icons-round" style="font-size:14px">file_download</span> Esporta File Aggiornato</div>
+                <div class="export-info-box">
+                    Le modifiche fatte da qui (colori, nomi, orari, avvisi) vengono <b>già applicate in tempo reale</b> a tutti tramite Firebase, senza bisogno di ricaricare nulla su GitHub.<br><br>
+                    Se però vuoi anche <b>salvare queste modifiche direttamente nel file index.html</b> — così restano impostate anche se in futuro Firebase non fosse raggiungibile, o per tenere un backup aggiornato — scarica il file qui sotto e ricaricalo su GitHub al posto di quello attuale.
+                </div>
+                <button class="btn-export" onclick="exportUpdatedHTML()"><span class="material-icons-round">download</span> SCARICA index.html AGGIORNATO</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="admin-save-toast" class="admin-save-toast"><span class="material-icons-round">check_circle</span> <span id="admin-save-toast-text">Salvato</span></div>
+
+<div id="access-detail-modal" onclick="closeAccessDetail(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <div class="header-text">
+                <h3><span class="material-icons-round" style="margin-right:10px">person_search</span> DETTAGLIO ACCESSO</h3>
+                <span>Connessione e cronologia visualizzazioni</span>
+            </div>
+            <button class="btn-close-modal" onclick="closeAccessDetail()">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        <div class="modal-body" id="access-detail-body" style="padding:0">
+            <div class="access-detail-hero">
+                <div class="access-detail-avatar" id="access-detail-avatar">?</div>
+                <div>
+                    <div style="font-weight:800;font-size:1.05rem;color:var(--text-main);" id="access-detail-name">—</div>
+                    <div class="access-detail-status-pill" id="access-detail-status-pill">Offline</div>
+                </div>
+            </div>
+            <div class="access-detail-stats">
+                <div class="access-detail-stat-box"><span>Dispositivo</span><b id="access-detail-device">—</b></div>
+                <div class="access-detail-stat-box"><span>Durata sessione</span><b id="access-detail-duration">--:--</b></div>
+                <div class="access-detail-stat-box"><span>Inizio sessione</span><b id="access-detail-start">—</b></div>
+                <div class="access-detail-stat-box"><span>Ultimo accesso</span><b id="access-detail-last">—</b></div>
+            </div>
+            <div class="admin-section-label" style="padding-left:20px;"><span class="material-icons-round" style="font-size:14px">history</span> Cronologia Visualizzazioni</div>
+            <div id="access-detail-history"></div>
         </div>
     </div>
 </div>
@@ -725,19 +1201,28 @@
         <div class="app-brand">
             <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
             <div class="brand-text">
-                <div class="github-lbl">
-                    <span class="material-icons-round" style="font-size:12px">update</span> GITHUB UPDATE
-                </div>
-                <span id="last-update-badge">Caricamento...</span>
+                <span class="app-title-text">INFERMIERI</span>
+                <span class="app-subtitle-text">2026</span>
             </div>
         </div>
         <div class="app-actions">
+            <button class="action-circle" onclick="vibrate();scrollToToday()" title="Vai a oggi">
+                <span class="material-icons-round">today</span>
+            </button>
+            <button class="action-circle driver-filter-btn" onclick="toggleDriverFilterDropdown(event)" style="position:relative">
+                <span class="material-icons-round">groups</span>
+                <span id="driver-filter-badge" class="badge-dot"></span>
+            </button>
+            <div id="driver-filter-dropdown" onclick="event.stopPropagation()">
+                <div class="driver-filter-title"><span class="material-icons-round" style="font-size:14px">groups</span> Filtra Operatori</div>
+                <div class="driver-filter-all-btn" id="driver-filter-all-btn" onclick="selectAllDriversFilter()">
+                    <span class="material-icons-round" style="font-size:16px">select_all</span> TUTTI GLI OPERATORI
+                </div>
+                <div class="driver-filter-grid" id="driver-filter-grid"></div>
+            </div>
             <div class="expandable-actions" id="expandable-actions-container">
                 <button class="action-circle-as" onclick="vibrate();window.open('https://centrale118rsm-code.github.io/Turni-Autisti-2026-Rsm/','_blank')">A.S.</button>
-                <button class="action-circle" onclick="vibrate();scrollToToday()">
-                    <span class="material-icons-round">my_location</span>
-                </button>
-                <button class="action-circle" onclick="openMonthModal()">
+                <button class="action-circle" onclick="toggleMonthDropdown(event)">
                     <span class="material-icons-round">calendar_month</span>
                 </button>
                 <button class="action-circle" onclick="openNotifCenter()" style="position:relative">
@@ -745,7 +1230,7 @@
                     <span id="notif-badge" class="badge-dot"></span>
                 </button>
                 <button class="action-circle menu-trigger" onclick="toggleMenu()">
-                    <span class="material-icons-round">menu</span>
+                    <span class="material-icons-round">more_vert</span>
                 </button>
             </div>
             <button class="action-circle" id="toggle-actions-btn" onclick="toggleActions()">
@@ -761,13 +1246,18 @@
                 <div class="menu-item" onclick="openOptionsModal()">
                     <span class="material-icons-round">settings</span> Opzioni
                 </div>
+                <div class="menu-item" onclick="openAdminLoginModal()">
+                    <span class="material-icons-round">admin_panel_settings</span> Area Admin
+                </div>
+                <div class="menu-item" onclick="requestChangeIdentity()">
+                    <span class="material-icons-round">switch_account</span> Cambia Utente
+                </div>
                 <div class="menu-item" onclick="vibrate();location.reload()">
                     <span class="material-icons-round">refresh</span> Aggiorna
                 </div>
             </div>
         </div>
     </div>
-    <div class="driver-scroller" id="driver-nav"></div>
 </header>
 
 <div class="container">
@@ -788,6 +1278,617 @@
     };
     const SCHEDULE = { "M":"06:30 - 13:15","P":"12:45 - 20:10","N":"19:45 - 00:00","SM":"00:00 - 07:20","S":"00:00 - 07:20","R":"RIPOSO" };
     const SCHEDULE_DIURNI = { "m":"06:30 - 13:42","p":"13:15 - 20:27","r":"RIPOSO" };
+    const DEFAULT_SCHEDULE = Object.assign({}, SCHEDULE);
+    const DEFAULT_SCHEDULE_DIURNI = Object.assign({}, SCHEDULE_DIURNI);
+
+    // ── DATI DI DEFAULT "INCORPORATI" NEL FILE ──────────────────────────────
+    // Queste costanti vengono lette/sovrascritte automaticamente dalla funzione
+    // di esportazione del Pannello Admin (tab "Esporta"). Non modificarle a mano
+    // se non sai cosa stai facendo: usa il pannello Admin dell'app.
+    const DEFAULT_COLORS_BAKED = {}; // __ADMIN_DEFAULT_COLORS__
+    const DEFAULT_NAME_OVERRIDES_BAKED = {}; // __ADMIN_DEFAULT_NAMES__
+    const DEFAULT_SCHEDULE_OVERRIDE_BAKED = {"SCHEDULE":{},"SCHEDULE_DIURNI":{}}; // __ADMIN_DEFAULT_SCHEDULE__
+    const DEFAULT_WELCOME_BAKED = {"active":true,"title":"ATTENZIONE","text":"L'app viene aggiornata spesso.\nIn caso di dubbio, verifica sempre i turni cartacei in guardiola.","duration":3}; // __ADMIN_DEFAULT_WELCOME__
+    const DEFAULT_ANNOUNCEMENTS_BAKED = []; // __ADMIN_DEFAULT_ANNOUNCEMENTS__
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // FIREBASE — inizializzazione, tracciamento accessi, sincronizzazione config
+    // ═══════════════════════════════════════════════════════════════════════
+    const firebaseConfig = {
+        apiKey: "AIzaSyDCycpsVJus8Mwd-AqaPORZIrFUIyo00VQ",
+        authDomain: "creazione-turni-118.firebaseapp.com",
+        projectId: "creazione-turni-118",
+        storageBucket: "creazione-turni-118.firebasestorage.app",
+        messagingSenderId: "389097635025",
+        appId: "1:389097635025:web:331564551f0e5190a199f0",
+        measurementId: "G-PBBLRX8ZZZ"
+    };
+    let fbApp, db, fbAuth, fbReady = false;
+    try {
+        fbApp = firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+        fbAuth = firebase.auth();
+        fbReady = true;
+    } catch(e) { console.error("Errore inizializzazione Firebase:", e); }
+
+    const ADMIN_PASSWORD = "Barbieri!";
+    const DEFAULT_COLORS = {
+        "--primary":"#1d4ed8","--c-M":"#0257d5","--c-P":"#3f7fe0","--c-N":"#002a66","--c-R":"#ecfdf5","--c-SM":"#0b0038",
+        "--bg-ferie":"#e2670f","--bg-rec":"#b3005f","--bg-cong":"#e0c700","--bg-mal":"#dc2626","--bg-nl":"#cceef2",
+        "--bg-perm":"#00c440","--bg-ng":"#009fd6","--bg-stu":"#2f6fe0","--bg-pn":"#0f3d21","--bg-coord":"#ffffff"
+    };
+    let nameOverrides = Object.assign({}, DEFAULT_NAME_OVERRIDES_BAKED);
+    let colorOverrides = Object.assign({}, DEFAULT_COLORS_BAKED);
+    let scheduleOverride = JSON.parse(JSON.stringify(DEFAULT_SCHEDULE_OVERRIDE_BAKED));
+    let welcomeConfig = Object.assign({}, DEFAULT_WELCOME_BAKED);
+    let customAnnouncements = JSON.parse(JSON.stringify(DEFAULT_ANNOUNCEMENTS_BAKED));
+    let announcementQueue = [];
+    applyColorOverrides();
+    Object.assign(SCHEDULE, scheduleOverride.SCHEDULE || {});
+    Object.assign(SCHEDULE_DIURNI, scheduleOverride.SCHEDULE_DIURNI || {});
+
+    // ── Sessione / tracciamento accessi ─────────────────────────────────────
+    // Ogni apertura dell'app genera una sessione NUOVA (non riutilizza mai una
+    // sessione precedente), così la durata mostrata in Admin è sempre corretta
+    // e non eredita mai il tempo di una visita passata.
+    let sessionId = 'sess_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,10);
+    let sessionStartTime = Date.now();
+    let currentViewLabel = "Avvio app";
+    let sessionViewHistory = [];
+    let adminAccessUnsub = null, adminConfigApplyBusy = false;
+
+    // ── Identità utente ("Chi sei?") ─────────────────────────────────────────
+    const IDENTITY_EXTRA_OPTIONS = ["Frisoni", "Ospite"];
+    let userIdentity = localStorage.getItem('infermieri_identity_name') || null;
+
+    function getDeviceLabel() {
+        const ua = navigator.userAgent;
+        let browser = "Browser";
+        if(/Edg\//.test(ua)) browser = "Edge";
+        else if(/OPR\//.test(ua)) browser = "Opera";
+        else if(/CriOS|Chrome\//.test(ua)) browser = "Chrome";
+        else if(/FxiOS|Firefox\//.test(ua)) browser = "Firefox";
+        else if(/Safari\//.test(ua) && !/Chrome/.test(ua)) browser = "Safari";
+        let os = "Dispositivo";
+        if(/iPhone|iPad|iPod/.test(ua)) os = "iOS";
+        else if(/Android/.test(ua)) os = "Android";
+        else if(/Windows/.test(ua)) os = "Windows";
+        else if(/Mac OS X/.test(ua)) os = "macOS";
+        else if(/Linux/.test(ua)) os = "Linux";
+        return `${browser} • ${os}`;
+    }
+
+    async function initFirebaseTracking() {
+        if(!fbReady) return;
+        try { await fbAuth.signInAnonymously(); } catch(e) { console.error("Auth anonima fallita:", e); }
+        try {
+            await db.collection('infermieri26_accessi').doc(sessionId).set({
+                device: getDeviceLabel(),
+                userAgent: navigator.userAgent,
+                identity: userIdentity || null,
+                startTime: firebase.firestore.FieldValue.serverTimestamp(),
+                lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+                currentView: currentViewLabel,
+                online: true
+            }, { merge:true });
+        } catch(e) { console.error("Errore scrittura sessione:", e); }
+        sendHeartbeat();
+        setInterval(sendHeartbeat, 20000);
+        document.addEventListener('visibilitychange', sendHeartbeat);
+        window.addEventListener('pagehide', () => {
+            try {
+                db.collection('infermieri26_accessi').doc(sessionId).set({ online:false, lastActive: firebase.firestore.FieldValue.serverTimestamp() }, { merge:true });
+            } catch(e) {}
+        });
+        listenConfigChanges();
+    }
+
+    function writeIdentityToSession() {
+        if(!fbReady) return;
+        db.collection('infermieri26_accessi').doc(sessionId).set({ identity: userIdentity || null }, { merge:true }).catch(()=>{});
+    }
+
+    // ── Modale "Chi sei?" ────────────────────────────────────────────────────
+    async function getLockedIdentities() {
+        if(!fbReady) return new Set();
+        try {
+            const cutoff = Date.now() - 90000;
+            const snap = await db.collection('infermieri26_accessi').where('online','==', true).get();
+            const locked = new Set();
+            snap.forEach(doc => {
+                if(doc.id === sessionId) return;
+                const d = doc.data();
+                if(d.identity && d.identity !== 'Ospite') {
+                    const ms = tsToMillis(d.lastActive);
+                    if(ms && ms > cutoff) locked.add(d.identity);
+                }
+            });
+            return locked;
+        } catch(e) { console.error("Errore lettura identità attive:", e); return new Set(); }
+    }
+    function showIdentityInfoPopup() {
+        let m = document.getElementById('identity-info-modal'); m.style.display = 'flex';
+        setTimeout(() => m.classList.add('open'), 20);
+    }
+    function closeIdentityInfoPopup() {
+        vibrate();
+        let m = document.getElementById('identity-info-modal'); m.classList.remove('open');
+        setTimeout(() => { m.style.display = 'none'; openIdentityModal(); }, 300);
+    }
+    async function openIdentityModal() {
+        const locked = await getLockedIdentities();
+        const names = (drivers && drivers.length) ? drivers.map(d => d.name) : [];
+        const allOptions = names.concat(IDENTITY_EXTRA_OPTIONS);
+        const c = document.getElementById('identity-list-container'); c.innerHTML = "";
+        allOptions.forEach(name => {
+            const isGuest = name === 'Ospite';
+            const isLocked = !isGuest && locked.has(name);
+            const initials = name.substring(0,2).toUpperCase();
+            const btn = document.createElement('div');
+            btn.className = 'identity-btn' + (isGuest ? ' guest-btn' : '') + (isLocked ? ' locked' : '');
+            btn.innerHTML = `<div class="identity-avatar">${isGuest ? '<span class="material-icons-round" style="font-size:20px">person</span>' : initials}</div><div class="identity-name">${name}</div>${isLocked ? '<div class="identity-lock-tag">In uso</div>' : ''}`;
+            if(!isLocked) btn.onclick = () => selectIdentity(name);
+            c.appendChild(btn);
+        });
+        let m = document.getElementById('identity-modal'); m.style.display = 'flex';
+        setTimeout(() => m.classList.add('open'), 20);
+    }
+    function selectIdentity(name) {
+        vibrate();
+        userIdentity = name;
+        localStorage.setItem('infermieri_identity_name', name);
+        writeIdentityToSession();
+        let m = document.getElementById('identity-modal'); m.classList.remove('open');
+        setTimeout(() => { m.style.display = 'none'; showStartupMessages(); }, 300);
+    }
+    function requestChangeIdentity() {
+        toggleMenu(); vibrate();
+        requestChangeIdentityDirect();
+    }
+    function requestChangeIdentityDirect() {
+        localStorage.removeItem('infermieri_identity_name');
+        userIdentity = null;
+        writeIdentityToSession();
+        openIdentityModal();
+    }
+
+    function sendHeartbeat() {
+        if(!fbReady) return;
+        db.collection('infermieri26_accessi').doc(sessionId).set({
+            lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+            currentView: currentViewLabel,
+            online: document.visibilityState === 'visible'
+        }, { merge:true }).catch(()=>{});
+    }
+
+    function setCurrentView(label) {
+        const changed = currentViewLabel !== label;
+        currentViewLabel = label;
+        if(changed) {
+            sessionViewHistory.push({ view: label, time: Date.now() });
+            if(sessionViewHistory.length > 40) sessionViewHistory.shift();
+        }
+        if(!fbReady) return;
+        const payload = {
+            lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+            currentView: currentViewLabel,
+            online: document.visibilityState === 'visible'
+        };
+        if(changed) payload.viewHistory = sessionViewHistory;
+        db.collection('infermieri26_accessi').doc(sessionId).set(payload, { merge:true }).catch(()=>{});
+    }
+
+    // ── Config remota (colori, nomi operatori, orari) ───────────────────────
+    function listenConfigChanges() {
+        if(!fbReady) return;
+        db.collection('infermieri26_config').doc('settings').onSnapshot(doc => {
+            if(!doc.exists) return;
+            const data = doc.data();
+            if(data.colors) { colorOverrides = data.colors; applyColorOverrides(); }
+            if(data.nameOverrides) { nameOverrides = data.nameOverrides; applyNameOverrides(); }
+            if(data.scheduleOverride) { scheduleOverride = data.scheduleOverride; applyScheduleOverride(); }
+            if(data.welcome) { welcomeConfig = Object.assign({}, DEFAULT_WELCOME_BAKED, data.welcome); }
+            if(data.announcements) { customAnnouncements = data.announcements; }
+        }, err => console.error("Errore ascolto config:", err));
+    }
+
+    function applyColorOverrides() {
+        Object.entries(colorOverrides).forEach(([varName, val]) => {
+            document.documentElement.style.setProperty(varName, val);
+        });
+    }
+    function applyNameOverrides() {
+        if(!drivers || drivers.length === 0) return;
+        let changed = false;
+        drivers.forEach(d => {
+            const orig = d.originalName || d.name;
+            d.originalName = orig;
+            const newName = nameOverrides[orig] || orig;
+            if(d.name !== newName) { d.name = newName; changed = true; }
+        });
+        if(changed) { renderTable(); renderDriverFilterDropdown(); initNotificationOptions(); }
+    }
+    function applyScheduleOverride() {
+        if(scheduleOverride.SCHEDULE) Object.assign(SCHEDULE, scheduleOverride.SCHEDULE);
+        if(scheduleOverride.SCHEDULE_DIURNI) Object.assign(SCHEDULE_DIURNI, scheduleOverride.SCHEDULE_DIURNI);
+        if(typeof finalData !== 'undefined' && finalData.length) renderTable();
+    }
+
+    // ── Login Admin ──────────────────────────────────────────────────────
+    function openAdminLoginModal() {
+        toggleMenu();
+        document.getElementById('admin-pw-input').value = "";
+        document.getElementById('admin-pw-error').innerText = "";
+        let m = document.getElementById('admin-login-modal'); m.style.display = 'flex';
+        setTimeout(() => { m.classList.add('open'); document.getElementById('admin-pw-input').focus(); }, 10);
+    }
+    function closeAdminLoginModal(e) { if(e && e.target !== e.currentTarget) return; let m = document.getElementById('admin-login-modal'); m.classList.remove('open'); setTimeout(() => m.style.display = 'none', 300); }
+    function checkAdminPassword() {
+        vibrate();
+        const val = document.getElementById('admin-pw-input').value;
+        if(val === ADMIN_PASSWORD) {
+            closeAdminLoginModal();
+            setTimeout(openAdminPanel, 250);
+        } else {
+            document.getElementById('admin-pw-error').innerText = "Password errata. Riprova.";
+        }
+    }
+
+    // ── Pannello Admin ───────────────────────────────────────────────────
+    function openAdminPanel() {
+        let m = document.getElementById('admin-panel-modal'); m.style.display = 'flex';
+        setTimeout(() => m.classList.add('open'), 10);
+        switchAdminTab('accessi', document.querySelector('.admin-tab-btn[data-tab="accessi"]'));
+        startAdminAccessListener();
+        populateAdminColorInputs();
+        populateAdminOperatorInputs();
+        populateAdminScheduleInputs();
+        populateAdminTextsInputs();
+        if(!window._adminDurationTicker) window._adminDurationTicker = setInterval(refreshAdminDurations, 1000);
+    }
+    function closeAdminPanel(e) {
+        if(e && e.target !== e.currentTarget) return;
+        let m = document.getElementById('admin-panel-modal'); m.classList.remove('open');
+        setTimeout(() => m.style.display = 'none', 250);
+        if(adminAccessUnsub) { adminAccessUnsub(); adminAccessUnsub = null; }
+        if(window._adminDurationTicker) { clearInterval(window._adminDurationTicker); window._adminDurationTicker = null; }
+        if(accessDetailTicker) { clearInterval(accessDetailTicker); accessDetailTicker = null; }
+        adminAnnouncementsDraft = null;
+    }
+    function switchAdminTab(tab, btnEl) {
+        vibrate();
+        document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.admin-tab-panel').forEach(p => p.classList.remove('active'));
+        if(btnEl) btnEl.classList.add('active');
+        document.getElementById('admin-tab-' + tab).classList.add('active');
+    }
+    function showAdminToast(text) {
+        const t = document.getElementById('admin-save-toast');
+        document.getElementById('admin-save-toast-text').innerText = text;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    let adminAccessDocs = [];
+    function startAdminAccessListener() {
+        if(!fbReady) return;
+        if(adminAccessUnsub) adminAccessUnsub();
+        adminAccessUnsub = db.collection('infermieri26_accessi').orderBy('lastActive','desc').limit(50)
+            .onSnapshot(snap => {
+                adminAccessDocs = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+                renderAdminAccessList();
+            }, err => {
+                console.error("Errore listener accessi:", err);
+                document.getElementById('admin-access-list').innerHTML = `<div class="admin-empty"><span class="material-icons-round">error_outline</span><br>Impossibile leggere gli accessi.<br><span style="font-size:0.7rem">Verifica le regole Firestore.</span></div>`;
+            });
+    }
+    function renderAdminAccessList() {
+        const c = document.getElementById('admin-access-list'); if(!c) return;
+        if(adminAccessDocs.length === 0) { c.innerHTML = `<div class="admin-empty"><span class="material-icons-round">devices_other</span><br>Nessun accesso registrato.</div>`; document.getElementById('admin-stat-online').innerText = 0; document.getElementById('admin-stat-total').innerText = 0; return; }
+        let onlineCount = 0;
+        c.innerHTML = adminAccessDocs.map(a => {
+            const isOnline = a.online && a.lastActive && (Date.now() - tsToMillis(a.lastActive)) < 60000;
+            if(isOnline) onlineCount++;
+            const start = tsToMillis(a.startTime) || Date.now();
+            const mainLabel = a.identity ? a.identity : 'Non identificato';
+            const subLabel = a.identity ? (a.device || '') : (a.device || 'Sconosciuto');
+            return `<div class="access-row" data-start="${start}" onclick="openAccessDetail('${a.id}')">
+                <span class="access-dot ${isOnline?'online':''}"></span>
+                <div class="access-info">
+                    <div class="access-device">${mainLabel}</div>
+                    <div class="access-view">${a.currentView || '—'}</div>
+                    <div class="access-meta">${subLabel} • Ultimo accesso: ${formatLastActive(a.lastActive)}</div>
+                </div>
+                <div class="access-duration">
+                    <div class="access-duration-inner"><b class="admin-dur-val">--:--</b><span>Sessione</span></div>
+                    <span class="material-icons-round access-chevron">chevron_right</span>
+                </div>
+            </div>`;
+        }).join('');
+        document.getElementById('admin-stat-online').innerText = onlineCount;
+        document.getElementById('admin-stat-total').innerText = adminAccessDocs.length;
+        refreshAdminDurations();
+    }
+    function tsToMillis(ts) { if(!ts) return null; if(typeof ts.toMillis === 'function') return ts.toMillis(); if(ts.seconds) return ts.seconds*1000; return null; }
+    function formatLastActive(ts) {
+        const ms = tsToMillis(ts); if(!ms) return "—";
+        return new Date(ms).toLocaleString('it-IT', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+    }
+
+    // ── Dettaglio singolo accesso ────────────────────────────────────────
+    let accessDetailTicker = null;
+    function openAccessDetail(docId) {
+        const a = adminAccessDocs.find(d => d.id === docId); if(!a) return;
+        vibrate();
+        const isOnline = a.online && a.lastActive && (Date.now() - tsToMillis(a.lastActive)) < 60000;
+        const name = a.identity || 'Non identificato';
+        document.getElementById('access-detail-name').innerText = name;
+        document.getElementById('access-detail-avatar').innerText = name.substring(0,2).toUpperCase();
+        const pill = document.getElementById('access-detail-status-pill');
+        pill.innerText = isOnline ? 'Online ora' : 'Offline';
+        pill.classList.toggle('online', isOnline);
+        document.getElementById('access-detail-device').innerText = a.device || 'Sconosciuto';
+        document.getElementById('access-detail-start').innerText = formatLastActive(a.startTime);
+        document.getElementById('access-detail-last').innerText = formatLastActive(a.lastActive);
+        const startMs = tsToMillis(a.startTime) || Date.now();
+        document.getElementById('access-detail-body').dataset.start = startMs;
+        renderAccessDetailHistory(a.viewHistory || []);
+        let m = document.getElementById('access-detail-modal'); m.style.display = 'flex';
+        setTimeout(() => m.classList.add('open'), 10);
+        if(!accessDetailTicker) accessDetailTicker = setInterval(refreshAccessDetailDuration, 1000);
+        refreshAccessDetailDuration();
+    }
+    function closeAccessDetail(e) {
+        if(e && e.target !== e.currentTarget) return;
+        let m = document.getElementById('access-detail-modal'); m.classList.remove('open');
+        setTimeout(() => m.style.display = 'none', 250);
+        if(accessDetailTicker) { clearInterval(accessDetailTicker); accessDetailTicker = null; }
+    }
+    function refreshAccessDetailDuration() {
+        const body = document.getElementById('access-detail-body'); if(!body) return;
+        const start = parseInt(body.dataset.start); if(!start) return;
+        const diff = Math.max(0, Date.now() - start);
+        const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+        document.getElementById('access-detail-duration').innerText = h > 0 ? `${h}h ${String(m).padStart(2,'0')}m` : `${m}m ${String(s).padStart(2,'0')}s`;
+    }
+    function renderAccessDetailHistory(history) {
+        const c = document.getElementById('access-detail-history'); if(!c) return;
+        if(!history || history.length === 0) { c.innerHTML = `<div class="admin-empty"><span class="material-icons-round">visibility_off</span><br>Nessuna cronologia disponibile.</div>`; return; }
+        const sorted = history.slice().reverse();
+        c.innerHTML = sorted.map(h => `<div class="history-item">
+            <span class="material-icons-round" style="font-size:18px;color:var(--primary)">visibility</span>
+            <div class="history-item-text"><b>${h.view}</b><span>${new Date(h.time).toLocaleString('it-IT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span></div>
+        </div>`).join('');
+    }
+
+    function refreshAdminDurations() {
+        document.querySelectorAll('.access-row').forEach(row => {
+            const start = parseInt(row.dataset.start); if(!start) return;
+            const diff = Math.max(0, Date.now() - start);
+            const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+            const txt = h > 0 ? `${h}h ${String(m).padStart(2,'0')}m` : `${m}m ${String(s).padStart(2,'0')}s`;
+            const el = row.querySelector('.admin-dur-val'); if(el) el.innerText = txt;
+        });
+    }
+
+    function populateAdminColorInputs() {
+        document.querySelectorAll('#admin-tab-aspetto input[type=color]').forEach(inp => {
+            const varName = inp.dataset.var;
+            const current = colorOverrides[varName] || getComputedStyle(document.documentElement).getPropertyValue(varName).trim() || DEFAULT_COLORS[varName] || "#000000";
+            inp.value = normalizeHexColor(current);
+        });
+    }
+    function normalizeHexColor(c) {
+        c = (c || "").trim();
+        if(/^#[0-9a-fA-F]{6}$/.test(c)) return c;
+        if(/^#[0-9a-fA-F]{8}$/.test(c)) return c.substring(0,7);
+        if(/^#[0-9a-fA-F]{3}$/.test(c)) return "#" + [...c.slice(1)].map(ch => ch+ch).join('');
+        return "#000000";
+    }
+    function saveAdminColors() {
+        vibrate();
+        const newColors = {};
+        document.querySelectorAll('#admin-tab-aspetto input[type=color]').forEach(inp => { newColors[inp.dataset.var] = inp.value; });
+        colorOverrides = newColors;
+        applyColorOverrides();
+        if(fbReady) {
+            db.collection('infermieri26_config').doc('settings').set({ colors: newColors }, { merge:true })
+                .then(() => showAdminToast("Colori salvati e sincronizzati"))
+                .catch(e => { console.error(e); showAdminToast("Errore salvataggio"); });
+        } else showAdminToast("Colori applicati (offline)");
+    }
+    function resetAdminColors() {
+        vibrate();
+        Object.entries(DEFAULT_COLORS).forEach(([k,v]) => document.documentElement.style.setProperty(k, v));
+        populateAdminColorInputs();
+        colorOverrides = {};
+        if(fbReady) db.collection('infermieri26_config').doc('settings').set({ colors: {} }, { merge:true }).catch(()=>{});
+        showAdminToast("Colori predefiniti ripristinati");
+    }
+
+    function populateAdminOperatorInputs() {
+        const c = document.getElementById('admin-operators-list'); if(!c) return;
+        if(!drivers || drivers.length === 0) { c.innerHTML = `<div class="admin-empty"><span class="material-icons-round">people_outline</span><br>Nessun operatore caricato.<br><span style="font-size:0.7rem">Attendi il caricamento del file turni.</span></div>`; return; }
+        c.innerHTML = drivers.map(d => {
+            const orig = d.originalName || d.name;
+            const val = nameOverrides[orig] || "";
+            return `<div class="admin-field-row"><label>${orig}</label><input type="text" data-orig="${orig.replace(/"/g,'&quot;')}" placeholder="${orig}" value="${val.replace(/"/g,'&quot;')}"></div>`;
+        }).join('');
+    }
+    function saveAdminOperators() {
+        vibrate();
+        const newOverrides = {};
+        document.querySelectorAll('#admin-operators-list input[type=text]').forEach(inp => {
+            const orig = inp.dataset.orig; const val = inp.value.trim();
+            if(val && val !== orig) newOverrides[orig] = val;
+        });
+        nameOverrides = newOverrides;
+        applyNameOverrides();
+        if(fbReady) {
+            db.collection('infermieri26_config').doc('settings').set({ nameOverrides: newOverrides }, { merge:true })
+                .then(() => showAdminToast("Nomi salvati e sincronizzati"))
+                .catch(e => { console.error(e); showAdminToast("Errore salvataggio"); });
+        } else showAdminToast("Nomi applicati (offline)");
+    }
+
+    function populateAdminScheduleInputs() {
+        Object.keys(DEFAULT_SCHEDULE).forEach(k => { const el = document.getElementById('sch-'+k); if(el) el.value = SCHEDULE[k] || ""; });
+        Object.keys(DEFAULT_SCHEDULE_DIURNI).forEach(k => { const el = document.getElementById('sch-'+k); if(el) el.value = SCHEDULE_DIURNI[k] || ""; });
+    }
+    function saveAdminSchedule() {
+        vibrate();
+        const newSched = {}, newSchedD = {};
+        Object.keys(DEFAULT_SCHEDULE).forEach(k => { const el = document.getElementById('sch-'+k); if(el) newSched[k] = el.value; });
+        Object.keys(DEFAULT_SCHEDULE_DIURNI).forEach(k => { const el = document.getElementById('sch-'+k); if(el) newSchedD[k] = el.value; });
+        scheduleOverride = { SCHEDULE: newSched, SCHEDULE_DIURNI: newSchedD };
+        applyScheduleOverride();
+        if(fbReady) {
+            db.collection('infermieri26_config').doc('settings').set({ scheduleOverride }, { merge:true })
+                .then(() => showAdminToast("Orari salvati e sincronizzati"))
+                .catch(e => { console.error(e); showAdminToast("Errore salvataggio"); });
+        } else showAdminToast("Orari applicati (offline)");
+    }
+
+    // ── Testi: avviso iniziale + avvisi aggiuntivi ──────────────────────────
+    function populateAdminTextsInputs() {
+        document.getElementById('welcome-active-toggle').checked = welcomeConfig.active !== false;
+        document.getElementById('admin-welcome-title').value = welcomeConfig.title || "";
+        document.getElementById('admin-welcome-text').value = welcomeConfig.text || "";
+        document.getElementById('admin-welcome-duration').value = welcomeConfig.duration || 3;
+        renderAdminAnnouncementsList();
+    }
+    function saveAdminWelcome() {
+        vibrate();
+        let duration = parseInt(document.getElementById('admin-welcome-duration').value);
+        if(isNaN(duration) || duration < 1) duration = 3;
+        if(duration > 30) duration = 30;
+        welcomeConfig = {
+            active: document.getElementById('welcome-active-toggle').checked,
+            title: document.getElementById('admin-welcome-title').value.trim() || "ATTENZIONE",
+            text: document.getElementById('admin-welcome-text').value,
+            duration: duration
+        };
+        if(fbReady) {
+            db.collection('infermieri26_config').doc('settings').set({ welcome: welcomeConfig }, { merge:true })
+                .then(() => showAdminToast("Avviso salvato e sincronizzato"))
+                .catch(e => { console.error(e); showAdminToast("Errore salvataggio"); });
+        } else showAdminToast("Avviso applicato (offline)");
+    }
+
+    let adminAnnouncementsDraft = null;
+    function renderAdminAnnouncementsList() {
+        if(adminAnnouncementsDraft === null) adminAnnouncementsDraft = JSON.parse(JSON.stringify(customAnnouncements || []));
+        const c = document.getElementById('admin-announce-list'); if(!c) return;
+        if(adminAnnouncementsDraft.length === 0) { c.innerHTML = `<div class="admin-empty" style="padding:20px;"><span class="material-icons-round">notifications_none</span><br>Nessun avviso aggiuntivo.</div>`; return; }
+        const icons = ["campaign","info","celebration","build","warning","event","update","favorite"];
+        c.innerHTML = adminAnnouncementsDraft.map((a, i) => `
+            <div class="announce-card">
+                <div class="announce-card-head">
+                    <select onchange="updateAnnouncementField(${i},'icon',this.value)">
+                        ${icons.map(ic => `<option value="${ic}" ${a.icon===ic?'selected':''}>${ic}</option>`).join('')}
+                    </select>
+                    <input type="text" value="${(a.title||'').replace(/"/g,'&quot;')}" placeholder="Titolo avviso" oninput="updateAnnouncementField(${i},'title',this.value)">
+                    <button class="announce-remove-btn" onclick="removeAdminAnnouncement(${i})"><span class="material-icons-round" style="font-size:18px">delete</span></button>
+                </div>
+                <textarea class="admin-textarea" style="min-height:70px;" placeholder="Testo avviso..." oninput="updateAnnouncementField(${i},'text',this.value)">${a.text||''}</textarea>
+                <label class="announce-toggle-inline">
+                    <input type="checkbox" ${a.active!==false?'checked':''} onchange="updateAnnouncementField(${i},'active',this.checked)"> Avviso attivo
+                </label>
+            </div>
+        `).join('');
+    }
+    function updateAnnouncementField(idx, field, value) {
+        if(!adminAnnouncementsDraft[idx]) return;
+        adminAnnouncementsDraft[idx][field] = value;
+    }
+    function addAdminAnnouncement() {
+        vibrate();
+        if(adminAnnouncementsDraft === null) adminAnnouncementsDraft = JSON.parse(JSON.stringify(customAnnouncements || []));
+        adminAnnouncementsDraft.push({ id: 'ann_' + Date.now(), icon:'campaign', title:'', text:'', active:true });
+        renderAdminAnnouncementsList();
+    }
+    function removeAdminAnnouncement(idx) {
+        vibrate();
+        adminAnnouncementsDraft.splice(idx, 1);
+        renderAdminAnnouncementsList();
+    }
+    function saveAdminAnnouncements() {
+        vibrate();
+        customAnnouncements = (adminAnnouncementsDraft || []).filter(a => (a.title && a.title.trim()) || (a.text && a.text.trim()));
+        if(fbReady) {
+            db.collection('infermieri26_config').doc('settings').set({ announcements: customAnnouncements }, { merge:true })
+                .then(() => showAdminToast("Avvisi salvati e sincronizzati"))
+                .catch(e => { console.error(e); showAdminToast("Errore salvataggio"); });
+        } else showAdminToast("Avvisi applicati (offline)");
+    }
+
+    // ── Messaggi di avvio (avviso principale + coda avvisi aggiuntivi) ──────
+    function applyWelcomeConfig() {
+        document.getElementById('welcome-title-text').innerText = welcomeConfig.title || "ATTENZIONE";
+        document.getElementById('welcome-body-text').innerHTML = (welcomeConfig.text || "").replace(/\n/g,'<br>');
+    }
+    function showStartupMessages() {
+        applyWelcomeConfig();
+        announcementQueue = (customAnnouncements || []).filter(a => a.active !== false).slice();
+        if(welcomeConfig.active === false) { showNextAnnouncement(); return; }
+        const durationSec = welcomeConfig.duration && welcomeConfig.duration > 0 ? welcomeConfig.duration : 3;
+        let wm = document.getElementById('welcome-modal');
+        const bar = document.getElementById('welcome-progress-bar');
+        bar.classList.remove('counting'); void bar.offsetWidth;
+        bar.style.animationDuration = durationSec + 's';
+        wm.style.display = 'flex';
+        setTimeout(() => { wm.classList.add('open'); bar.classList.add('counting'); }, 50);
+        setTimeout(closeWelcomeModal, (durationSec * 1000) + 50);
+    }
+    function showNextAnnouncement() {
+        if(!announcementQueue || announcementQueue.length === 0) return;
+        const item = announcementQueue.shift();
+        document.getElementById('announce-title-text').innerText = item.title || "AVVISO";
+        document.getElementById('announce-body-text').innerHTML = (item.text || "").replace(/\n/g,'<br>');
+        document.getElementById('announce-icon-el').innerText = item.icon || "campaign";
+        let m = document.getElementById('custom-announce-modal');
+        m.style.display = 'flex'; setTimeout(() => m.classList.add('open'), 30);
+    }
+    function closeAnnounceModal() {
+        vibrate();
+        let m = document.getElementById('custom-announce-modal');
+        m.classList.remove('open');
+        setTimeout(() => { m.style.display = 'none'; showNextAnnouncement(); }, 300);
+    }
+
+    // ── Esportazione file HTML con le personalizzazioni incorporate ────────
+    function bakeMarkerConst(src, marker, varName, value) {
+        const json = JSON.stringify(value);
+        const re = new RegExp('const ' + varName + ' = .*?; // ' + marker);
+        if(re.test(src)) return src.replace(re, 'const ' + varName + ' = ' + json + '; // ' + marker);
+        console.warn('Marker non trovato nel sorgente:', marker);
+        return src;
+    }
+    async function exportUpdatedHTML() {
+        vibrate();
+        showAdminToast("Preparazione file in corso...");
+        try {
+            const res = await fetch(location.pathname + '?export=' + Date.now(), { cache:'no-store' });
+            if(!res.ok) throw new Error('Impossibile leggere il file corrente (' + res.status + ')');
+            let src = await res.text();
+            src = bakeMarkerConst(src, '__ADMIN_DEFAULT_COLORS__', 'DEFAULT_COLORS_BAKED', colorOverrides);
+            src = bakeMarkerConst(src, '__ADMIN_DEFAULT_NAMES__', 'DEFAULT_NAME_OVERRIDES_BAKED', nameOverrides);
+            src = bakeMarkerConst(src, '__ADMIN_DEFAULT_SCHEDULE__', 'DEFAULT_SCHEDULE_OVERRIDE_BAKED', scheduleOverride);
+            src = bakeMarkerConst(src, '__ADMIN_DEFAULT_WELCOME__', 'DEFAULT_WELCOME_BAKED', welcomeConfig);
+            src = bakeMarkerConst(src, '__ADMIN_DEFAULT_ANNOUNCEMENTS__', 'DEFAULT_ANNOUNCEMENTS_BAKED', customAnnouncements);
+
+            const blob = new Blob([src], { type:'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'index.html';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 5000);
+            showAdminToast("File scaricato: carica su GitHub per pubblicare");
+        } catch(e) {
+            console.error(e);
+            showAdminToast("Errore durante l'esportazione del file");
+        }
+    }
 
     const audioGraziella = new Audio('graziella.mp3');
     function playGraziella() {
@@ -816,7 +1917,7 @@
 
     if(localStorage.getItem('theme') === 'dark') {
         document.body.classList.add('dark-mode');
-        document.querySelector('#theme-color-meta').setAttribute('content','#0f172a');
+        document.querySelector('#theme-color-meta').setAttribute('content','#080d18');
         window.addEventListener('load', () => { if(document.getElementById('dark-mode-toggle')) document.getElementById('dark-mode-toggle').checked = true; });
     }
 
@@ -837,6 +1938,12 @@
     function openOptionsModal() {
         toggleMenu(); let m = document.getElementById('options-modal'); m.style.display = 'flex'; setTimeout(() => m.classList.add('open'), 10);
         const tg = document.getElementById('dark-mode-toggle'); if(tg) tg.checked = document.body.classList.contains('dark-mode');
+        const nameEl = document.getElementById('options-identity-name'), avEl = document.getElementById('options-identity-avatar');
+        if(nameEl && avEl) {
+            if(userIdentity) { nameEl.innerText = userIdentity; avEl.innerText = userIdentity.substring(0,2).toUpperCase(); }
+            else { nameEl.innerText = "Non identificato"; avEl.innerText = "?"; }
+        }
+        setCurrentView("Opzioni");
     }
     function closeOptionsModal(e) { if(e && e.target !== e.currentTarget) return; let m = document.getElementById('options-modal'); m.classList.remove('open'); setTimeout(() => m.style.display = 'none', 200); }
 
@@ -844,39 +1951,53 @@
         vibrate(); document.body.classList.toggle('dark-mode');
         const isDark = document.body.classList.contains('dark-mode');
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        document.querySelector('#theme-color-meta').setAttribute('content', isDark ? '#0f172a' : '#ffffff');
+        document.querySelector('#theme-color-meta').setAttribute('content', isDark ? '#080d18' : '#e9edf3');
     }
 
-    function openMonthModal() {
+    function toggleMonthDropdown(e) {
+        if(e) e.stopPropagation();
         vibrate();
-        const grid = document.getElementById('month-grid-container'); grid.innerHTML = "";
-        if(globalMonthsList.length === 0) { grid.innerHTML = "<div style='grid-column:1/-1;text-align:center;'>Nessun mese disponibile</div>"; }
-        else {
-            globalMonthsList.forEach(m => {
-                let btn = document.createElement('div'); btn.className = 'month-btn'; btn.innerText = m.name.substr(0,3);
-                btn.onclick = () => { vibrate(); closeMonthModal(); const el = document.getElementById(m.id); if(el) window.scrollTo({ top: window.scrollY + el.getBoundingClientRect().top - 120, behavior:"smooth" }); };
-                grid.appendChild(btn);
-            });
-        }
-        let m = document.getElementById('month-select-modal'); m.style.display = 'flex'; setTimeout(() => m.classList.add('open'), 10);
+        const dd = document.getElementById('month-select-dropdown');
+        if(dd.classList.contains('open')) { closeMonthDropdown(); return; }
+        renderMonthDropdown();
+        dd.classList.add('open');
     }
-    function closeMonthModal(e) { if(e && e.target !== e.currentTarget) return; let m = document.getElementById('month-select-modal'); m.classList.remove('open'); setTimeout(() => m.style.display = 'none', 200); }
+    function closeMonthDropdown() { document.getElementById('month-select-dropdown').classList.remove('open'); }
+    function renderMonthDropdown() {
+        const grid = document.getElementById('month-grid-container'); grid.innerHTML = "";
+        if(globalMonthsList.length === 0) { grid.innerHTML = "<div style='text-align:center;color:var(--text-sec);padding:10px;'>Nessun mese disponibile</div>"; return; }
+        const nowMonthIdx = new Date().getMonth();
+        globalMonthsList.forEach(m => {
+            const isCurrent = MONTH_MAP[m.name] === nowMonthIdx;
+            const niceName = m.name.charAt(0) + m.name.slice(1).toLowerCase();
+            let btn = document.createElement('div'); btn.className = 'month-btn' + (isCurrent ? ' month-current' : '');
+            btn.innerHTML = `<span class="material-icons-round">${isCurrent ? 'today' : 'event'}</span><span>${niceName}</span>`;
+            btn.onclick = () => { vibrate(); closeMonthDropdown(); const el = document.getElementById(m.id); if(el) window.scrollTo({ top: window.scrollY + el.getBoundingClientRect().top - 120, behavior:"smooth" }); };
+            grid.appendChild(btn);
+        });
+    }
 
     document.addEventListener('click', function(event) {
         let m = document.getElementById('menu-dropdown'); let btn = document.querySelector('.action-circle.menu-trigger');
         if(m.style.display === 'flex' && !m.contains(event.target) && !btn.contains(event.target)) toggleMenu();
+        let dd = document.getElementById('driver-filter-dropdown'); let dbtn = document.querySelector('.driver-filter-btn');
+        if(dd.classList.contains('open') && !dd.contains(event.target) && !dbtn.contains(event.target)) closeDriverFilterDropdown();
+        let md = document.getElementById('month-select-dropdown');
+        if(md.classList.contains('open') && !md.contains(event.target)) closeMonthDropdown();
     });
 
     window.onload = async () => {
+        initFirebaseTracking();
         try {
             const lastUp = new Date(document.lastModified);
-            document.getElementById('last-update-badge').innerHTML = `${lastUp.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'})} - ${lastUp.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}`;
+            const lastUpText = `${lastUp.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'})} - ${lastUp.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}`;
+            const optUpd = document.getElementById('options-last-update'); if(optUpd) optUpd.innerText = lastUpText;
         } catch(e) {}
         try {
             const response = await fetch(FILE_NAME); if(!response.ok) throw new Error("File mancante");
             const buffer = await response.arrayBuffer(); await loadWorkbook(buffer);
         } catch(e) {
-            console.error(e); document.getElementById('auto-loader').style.display = 'none';
+            console.error(e); document.getElementById('splash-brand').style.display = 'none';
             document.getElementById('manual-upload').style.display = 'block';
         }
     };
@@ -900,9 +2021,12 @@
                 rawData[rowNumber] = rowData;
             });
             finalData = parseHorizontalLayout(rawData);
-            document.getElementById('loader').style.opacity = '0';
-            setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
+            vibrate();
             initApp();
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
+            }, 900);
         } catch(e) { alert("Errore file: " + e.message); }
     }
 
@@ -961,24 +2085,30 @@
 
     function closeWelcomeModal() {
         vibrate(); let m = document.getElementById('welcome-modal');
-        m.classList.remove('open'); setTimeout(() => m.style.display = 'none', 400);
+        m.classList.remove('open');
+        setTimeout(() => {
+            m.style.display = 'none';
+            const bar = document.getElementById('welcome-progress-bar'); if(bar) bar.classList.remove('counting');
+            showNextAnnouncement();
+        }, 400);
     }
 
     function initApp() {
         let header = finalData[0]; drivers = [];
-        for(let i=3; i<header.length; i++) drivers.push({name:header[i], idx:i});
-        const drvNav = document.getElementById('driver-nav'); drvNav.innerHTML = "";
-        let btnAll = document.createElement('div'); btnAll.className = "chip chip-driver active"; btnAll.innerText = "TUTTI";
-        btnAll.dataset.idx = "all"; btnAll.onclick = () => filterDriver("all", btnAll); drvNav.appendChild(btnAll);
-        drivers.forEach(d => {
-            let btn = document.createElement('div'); btn.className = "chip chip-driver"; btn.innerText = d.name;
-            btn.dataset.idx = d.idx; btn.onclick = () => filterDriver(d.idx, btn); drvNav.appendChild(btn);
-        });
+        for(let i=3; i<header.length; i++) {
+            const orig = header[i];
+            drivers.push({ name: nameOverrides[orig] || orig, idx:i, originalName: orig });
+        }
         let savedDr = localStorage.getItem("selected_nurses");
-        if(savedDr) { try { const arr = JSON.parse(savedDr); if(Array.isArray(arr)) { selectedDrivers = new Set(arr); updateDriverButtons(); } } catch(e) {} }
+        if(savedDr) { try { const arr = JSON.parse(savedDr); if(Array.isArray(arr)) selectedDrivers = new Set(arr); } catch(e) {} }
+        renderDriverFilterDropdown(); updateDriverFilterBadge();
         initNotificationOptions(); loadNotificationHistory(); renderTable(); startLiveClock();
-        setTimeout(scrollToToday, 600); setTimeout(checkForScheduleChanges, 2000);
-        setTimeout(() => { let wm = document.getElementById('welcome-modal'); wm.style.display = 'flex'; setTimeout(() => wm.classList.add('open'), 50); }, 800);
+        setCurrentView("Tabella Turni");
+        setTimeout(scrollToToday, 600); setTimeout(checkForScheduleChanges, 2500);
+        setTimeout(() => {
+            if(userIdentity) { writeIdentityToSession(); showStartupMessages(); }
+            else showIdentityInfoPopup();
+        }, 1700);
     }
 
     function initNotificationOptions() {
@@ -1025,7 +2155,7 @@
     function loadNotificationHistory() { let saved = localStorage.getItem('notifications_history_nurses'); if(saved) notifHistory = JSON.parse(saved); updateBadge(); }
     function saveNotifications() { localStorage.setItem('notifications_history_nurses', JSON.stringify(notifHistory)); }
     function updateBadge() { const c = notifHistory.filter(n => !n.read).length; const b = document.getElementById('notif-badge'); if(c > 0) b.classList.add('visible'); else b.classList.remove('visible'); }
-    function openNotifCenter() { vibrate(); let modal = document.getElementById('notif-center-modal'); modal.style.display = 'flex'; setTimeout(() => modal.classList.add('open'), 10); renderNotifList(); setTimeout(() => { notifHistory.forEach(n => n.read = true); saveNotifications(); updateBadge(); }, 1000); }
+    function openNotifCenter() { vibrate(); let modal = document.getElementById('notif-center-modal'); modal.style.display = 'flex'; setTimeout(() => modal.classList.add('open'), 10); renderNotifList(); setCurrentView("Notifiche"); setTimeout(() => { notifHistory.forEach(n => n.read = true); saveNotifications(); updateBadge(); }, 1000); }
     function closeNotifCenter() { let modal = document.getElementById('notif-center-modal'); modal.classList.remove('open'); setTimeout(() => modal.style.display = 'none', 300); }
     function renderNotifList() { const c = document.getElementById('notif-list-container'); c.innerHTML = ""; if(notifHistory.length===0){c.innerHTML='<div class="no-notif">Nessuna notifica.</div>';return;} notifHistory.forEach(item=>{c.innerHTML+=`<div class="notif-item ${item.read?'':'unread'}"><div class="notif-date">${item.date}</div><div class="notif-text">${item.text}</div><button class="btn-del-notif" onclick="deleteNotif(${item.id})"><span class="material-icons-round" style="font-size:18px">close</span></button></div>`;}); }
     function deleteNotif(id) { vibrate(); notifHistory = notifHistory.filter(n => n.id !== id); saveNotifications(); renderNotifList(); updateBadge(); }
@@ -1038,24 +2168,55 @@
         if(el) window.scrollTo({ top: window.scrollY + el.getBoundingClientRect().top - 240, behavior:"smooth" });
     }
 
-    function filterDriver(val, btnEl) {
+    function filterDriver(val) {
         vibrate();
         if(val === 'all') selectedDrivers.clear();
         else { const intVal = parseInt(val); if(selectedDrivers.has(intVal)) selectedDrivers.delete(intVal); else selectedDrivers.add(intVal); }
-        localStorage.setItem("selected_nurses", JSON.stringify([...selectedDrivers])); updateDriverButtons(); renderTable();
+        localStorage.setItem("selected_nurses", JSON.stringify([...selectedDrivers])); renderTable();
+        renderDriverFilterDropdown(); updateDriverFilterBadge();
+        if(selectedDrivers.size === 0) setCurrentView("Tabella Turni (Tutti)");
+        else setCurrentView("Filtro: " + drivers.filter(d => selectedDrivers.has(d.idx)).map(d => d.name).join(", "));
     }
-    function updateDriverButtons() {
-        const allBtn = document.querySelector('.chip-driver[data-idx="all"]');
-        if(selectedDrivers.size === 0) allBtn.classList.add('active'); else allBtn.classList.remove('active');
-        document.querySelectorAll('.chip-driver:not([data-idx="all"])').forEach(btn => {
-            const idx = parseInt(btn.dataset.idx);
-            if(selectedDrivers.has(idx)) btn.classList.add('active'); else btn.classList.remove('active');
+    function selectAllDriversFilter() { filterDriver('all'); }
+    function toggleDriverFilterDropdown(e) {
+        if(e) e.stopPropagation();
+        vibrate();
+        const dd = document.getElementById('driver-filter-dropdown');
+        if(dd.classList.contains('open')) closeDriverFilterDropdown();
+        else { renderDriverFilterDropdown(); dd.classList.add('open'); }
+    }
+    function closeDriverFilterDropdown() { document.getElementById('driver-filter-dropdown').classList.remove('open'); }
+    function renderDriverFilterDropdown() {
+        const grid = document.getElementById('driver-filter-grid'); if(!grid) return;
+        grid.innerHTML = "";
+        drivers.forEach(d => {
+            const chip = document.createElement('div');
+            chip.className = "driver-filter-chip" + (selectedDrivers.has(d.idx) ? " active" : "");
+            chip.innerText = d.name;
+            chip.onclick = () => filterDriver(d.idx);
+            grid.appendChild(chip);
         });
+        const allBtn = document.getElementById('driver-filter-all-btn');
+        if(allBtn) allBtn.classList.toggle('active', selectedDrivers.size === 0);
+    }
+    function updateDriverFilterBadge() {
+        const b = document.getElementById('driver-filter-badge'); if(!b) return;
+        if(selectedDrivers.size > 0) b.classList.add('visible'); else b.classList.remove('visible');
     }
     function startLiveClock() {
         setInterval(() => {
             const now = new Date();
-            document.querySelectorAll('.live-clock').forEach(el => el.innerText = `${now.toLocaleDateString('it-IT',{weekday:'short',day:'numeric',month:'short'})} • ${now.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}`);
+            const dateShort = now.toLocaleDateString('it-IT',{weekday:'short',day:'numeric',month:'short'});
+            const hh = String(now.getHours()).padStart(2,'0'), mm = String(now.getMinutes()).padStart(2,'0'), ss = String(now.getSeconds()).padStart(2,'0');
+            document.querySelectorAll('.live-clock').forEach(el => {
+                el.innerHTML = `<span class="material-icons-round">schedule</span><span class="lc-date">${dateShort}</span><span class="lc-time">${hh}:${mm}<span class="lc-sec">:${ss}</span></span>`;
+            });
+            const dateEl = document.getElementById('options-live-date');
+            const hmEl = document.getElementById('options-live-hm');
+            const sEl = document.getElementById('options-live-s');
+            if(dateEl) dateEl.innerText = now.toLocaleDateString('it-IT', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+            if(hmEl) hmEl.innerText = `${hh}:${mm}`;
+            if(sEl) sEl.innerText = `:${ss}`;
         }, 1000);
     }
 
@@ -1318,6 +2479,7 @@
     function openDinnerModal() {
         toggleMenu();
         let m = document.getElementById('dinner-modal'); m.style.display = 'flex'; setTimeout(() => m.classList.add('open'), 10);
+        setCurrentView("Organizza Uscita");
         resetDinnerStep();
         let ml = document.getElementById('dinner-month-list'); ml.innerHTML = "";
         let currentDate = new Date(); let currentMonthIdx = currentDate.getMonth(); let currentYear = currentDate.getFullYear();
@@ -1438,6 +2600,7 @@
         resetWheelFullState();
         document.getElementById('wheel-modal').style.display = 'flex';
         setTimeout(() => document.getElementById('wheel-modal').classList.add('open'), 10);
+        setCurrentView("Ruota della Sfiga");
         goToWheelStep(1);
     }
     function closeWheelModal(e) { if(e && e.target !== e.currentTarget) return; let m = document.getElementById('wheel-modal'); m.classList.remove('open'); setTimeout(() => m.style.display = 'none', 200); }
@@ -1566,7 +2729,7 @@
             const textRadius = r * 0.66;
             let label = name.length > 14 ? name.substring(0,13) + '…' : name;
             paths += `<path d="M${cx},${cy} L${x1.toFixed(2)},${y1.toFixed(2)} A${r},${r} 0 ${largeArc} 1 ${x2.toFixed(2)},${y2.toFixed(2)} Z" fill="${color}" stroke="#fff" stroke-width="2"/>`;
-            paths += `<text x="${textRadius.toFixed(2)}" y="0" transform="translate(${cx},${cy}) rotate(${mid.toFixed(2)})" fill="#fff" font-size="${fontSize}" font-weight="800" text-anchor="middle" dominant-baseline="middle" font-family="Inter,sans-serif" style="letter-spacing:0.2px;">${label}</text>`;
+            paths += `<text x="${textRadius.toFixed(2)}" y="0" transform="translate(${cx},${cy}) rotate(${mid.toFixed(2)})" fill="#fff" font-size="${fontSize}" font-weight="800" text-anchor="middle" dominant-baseline="middle" font-family="'Plus Jakarta Sans',sans-serif" style="letter-spacing:0.2px;">${label}</text>`;
         });
         return `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;">${paths}</svg>`;
     }
