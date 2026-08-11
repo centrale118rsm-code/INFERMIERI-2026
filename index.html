@@ -2,6 +2,9 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -312,8 +315,14 @@
             background: radial-gradient(circle at 30% 20%, rgba(37,99,235,0.15), transparent 55%),
                         radial-gradient(circle at 80% 80%, rgba(30,58,138,0.18), transparent 55%),
                         var(--bg);
-            transition: opacity 0.5s ease;
+            transition: opacity 0.5s ease; overflow:hidden;
         }
+        #loader::before {
+            content:""; position:absolute; inset:0; pointer-events:none;
+            background: radial-gradient(circle at 50% 45%, rgba(29,78,216,0.1), transparent 60%);
+            animation: loaderBgPulse 4s ease-in-out infinite;
+        }
+        @keyframes loaderBgPulse { 0%,100%{ opacity:0.5; } 50%{ opacity:1; } }
         .spinner { border:4px solid #f3f3f3; border-top:4px solid var(--primary); border-radius:50%; width:40px; height:40px; animation:spin 0.8s cubic-bezier(0.68,-0.55,0.27,1.55) infinite; margin-bottom:20px; }
         @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
         #auto-loader { display:none; }
@@ -321,23 +330,40 @@
         .file-label { background:var(--primary); color:white; padding:12px 24px; border-radius:12px; font-weight:bold; cursor:pointer; font-size:0.95rem; display:inline-flex; align-items:center; gap:8px; margin-top:15px; box-shadow:0 4px 15px rgba(37,99,235,0.4); transition:transform 0.2s; }
         .file-label:active { transform:scale(0.96); }
         input[type="file"] { display:none; }
-        #splash-brand { display:flex; flex-direction:column; align-items:center; }
+        #splash-brand { display:flex; flex-direction:column; align-items:center; position:relative; z-index:1; }
         .splash-icon-ring {
-            width:88px; height:88px; border-radius:26px; background:linear-gradient(135deg,#1e3a8a,#2563eb);
-            display:flex; align-items:center; justify-content:center; margin-bottom:22px;
-            box-shadow:0 14px 40px rgba(37,99,235,0.4); animation:splashPop 0.6s cubic-bezier(0.34,1.56,0.64,1);
+            width:92px; height:92px; border-radius:28px; background:linear-gradient(135deg,#0f2a63,#1d4ed8,#3b82f6);
+            display:flex; align-items:center; justify-content:center; margin-bottom:24px;
+            box-shadow:0 16px 44px rgba(29,78,216,0.4); animation:splashPop 0.6s cubic-bezier(0.34,1.56,0.64,1);
+            position:relative; overflow:hidden;
         }
-        .splash-icon-ring .material-icons-round { font-size:44px; color:#fff; }
+        .splash-icon-ring::before {
+            content:""; position:absolute; inset:-16px; border-radius:36px; z-index:-1;
+            background:radial-gradient(circle, rgba(29,78,216,0.4), transparent 70%);
+            animation:splashHalo 2.4s ease-in-out infinite;
+        }
+        .splash-icon-ring::after {
+            content:""; position:absolute; inset:0;
+            background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.35) 50%, transparent 60%);
+            background-size:250% 250%; background-position:-120% -120%;
+            animation:splashShine 2.8s ease-in-out infinite;
+        }
+        @keyframes splashHalo { 0%,100%{ transform:scale(0.9); opacity:0.45; } 50%{ transform:scale(1.2); opacity:0.85; } }
+        @keyframes splashShine { 0%{ background-position:-120% -120%; } 55%,100%{ background-position:140% 140%; } }
+        .splash-icon-ring .material-icons-round { font-size:46px; color:#fff; position:relative; z-index:1; }
         .splash-title {
-            font-size:2.6rem; font-weight:900; letter-spacing:3px; margin:0;
-            background:linear-gradient(135deg,#1e3a8a,#2563eb,#60a5fa);
+            font-size: clamp(1.4rem, 6.5vw, 2.3rem); font-weight:900; letter-spacing:0.5px; margin:0;
+            text-align:center; max-width:90vw; line-height:1.15;
+            background:linear-gradient(135deg,#0f2a63,#1d4ed8,#60a5fa);
             -webkit-background-clip:text; background-clip:text; color:transparent;
             animation:splashPop 0.7s cubic-bezier(0.34,1.56,0.64,1);
         }
         .splash-sub {
-            margin-top:8px; font-size:0.8rem; font-weight:800; letter-spacing:5px; color:var(--text-sec);
+            margin-top:12px; font-size:0.76rem; font-weight:800; letter-spacing:3.5px; color:var(--text-sec);
             text-transform:uppercase; opacity:0; animation:splashFadeIn 0.6s ease 0.25s forwards;
+            display:flex; align-items:center; gap:10px;
         }
+        .splash-sub::before, .splash-sub::after { content:""; width:18px; height:1px; background:var(--border); }
         .splash-dots { display:flex; gap:6px; margin-top:28px; opacity:0; animation:splashFadeIn 0.6s ease 0.4s forwards; }
         .splash-dots span { width:7px; height:7px; border-radius:50%; background:var(--primary); animation:splashDotPulse 1.2s ease-in-out infinite; }
         .splash-dots span:nth-child(2) { animation-delay:0.15s; }
@@ -642,6 +668,9 @@
         .identity-btn.locked .identity-avatar { background:#a3adc2; }
         .identity-btn.locked .identity-name { text-decoration:line-through; text-decoration-thickness:2px; color:var(--text-sec); }
         .identity-lock-tag { font-size:0.55rem; font-weight:800; color:#dc2626; text-transform:uppercase; }
+        .identity-btn.current { background:linear-gradient(135deg, rgba(29,78,216,0.12), rgba(29,78,216,0.03)); border-color:var(--primary); box-shadow:0 3px 10px rgba(29,78,216,0.15); }
+        .identity-btn.current .identity-avatar { box-shadow:0 0 0 2px var(--bg-card), 0 0 0 4px var(--primary); }
+        .identity-current-tag { font-size:0.55rem; font-weight:800; color:var(--primary); text-transform:uppercase; letter-spacing:0.5px; }
         .identity-footer { padding:12px 20px 20px; text-align:center; font-size:0.72rem; color:var(--text-sec); }
         .graziella-icon { position:absolute; top:-8px; right:-8px; width:26px; height:26px; border-radius:50%; border:2px solid var(--bg-card); box-shadow:0 2px 5px rgba(0,0,0,0.3); z-index:10; background:#fff; object-fit:cover; cursor:pointer; transition:transform 0.2s; }
         .graziella-icon:active { transform:scale(0.85); }
@@ -778,8 +807,8 @@
     </div>
     <div id="splash-brand">
         <div class="splash-icon-ring"><span class="material-icons-round">local_hospital</span></div>
-        <h1 class="splash-title">INFERMIERI</h1>
-        <span class="splash-sub">2026</span>
+        <h1 class="splash-title" id="splash-welcome-title">TURNI INFERMIERI</h1>
+        <span class="splash-sub" id="splash-welcome-sub">2026</span>
         <div class="splash-dots"><span></span><span></span><span></span></div>
     </div>
     <div id="manual-upload">
@@ -1340,8 +1369,23 @@
     // ── Identità utente ("Chi sei?") ─────────────────────────────────────────
     const IDENTITY_EXTRA_OPTIONS = ["Frisoni", "Ospite"];
     let userIdentity = localStorage.getItem('infermieri_identity_name') || null;
+    console.log('[Identità] Letta da localStorage all\'avvio:', userIdentity || '(nessuna)');
     let identityRecoveryPromise = null;
 
+    // Personalizza subito la schermata di apertura se conosciamo già chi è
+    function applySplashWelcome() {
+        const titleEl = document.getElementById('splash-welcome-title');
+        const subEl = document.getElementById('splash-welcome-sub');
+        if(!titleEl || !subEl) return;
+        if(userIdentity) {
+            titleEl.innerText = `Benvenuto, ${userIdentity}`;
+            subEl.innerText = 'Turni Infermieri 2026';
+        } else {
+            titleEl.innerText = 'TURNI INFERMIERI';
+            subEl.innerText = '2026';
+        }
+    }
+    applySplashWelcome();
     function getDeviceLabel() {
         const ua = navigator.userAgent;
         let browser = "Browser";
@@ -1392,11 +1436,17 @@
     async function tryRecoverIdentityFromUid() {
         if(userIdentity || !fbReady) return;
         try {
-            const uid = fbAuth.currentUser && fbAuth.currentUser.uid; if(!uid) return;
+            const uid = fbAuth.currentUser && fbAuth.currentUser.uid;
+            console.log('[Identità] Tentativo recupero da UID Firebase:', uid || '(uid assente)');
+            if(!uid) return;
             const doc = await db.collection('infermieri26_identities').doc(uid).get();
             if(doc.exists && doc.data().name) {
                 userIdentity = doc.data().name;
                 localStorage.setItem('infermieri_identity_name', userIdentity);
+                applySplashWelcome();
+                console.log('[Identità] Recuperata dal backup UID:', userIdentity);
+            } else {
+                console.log('[Identità] Nessun backup trovato per questo UID.');
             }
         } catch(e) { console.error("Errore recupero identità di riserva:", e); }
     }
@@ -1448,11 +1498,15 @@
         const c = document.getElementById('identity-list-container'); c.innerHTML = "";
         allOptions.forEach(name => {
             const isGuest = name === 'Ospite';
-            const isLocked = !isGuest && locked.has(name);
+            const isCurrent = name === userIdentity;
+            const isLocked = !isGuest && !isCurrent && locked.has(name);
             const initials = name.substring(0,2).toUpperCase();
             const btn = document.createElement('div');
-            btn.className = 'identity-btn' + (isGuest ? ' guest-btn' : '') + (isLocked ? ' locked' : '');
-            btn.innerHTML = `<div class="identity-avatar">${isGuest ? '<span class="material-icons-round" style="font-size:20px">person</span>' : initials}</div><div class="identity-name">${name}</div>${isLocked ? '<div class="identity-lock-tag">In uso</div>' : ''}`;
+            btn.className = 'identity-btn' + (isGuest ? ' guest-btn' : '') + (isLocked ? ' locked' : '') + (isCurrent ? ' current' : '');
+            let tag = '';
+            if(isCurrent) tag = '<div class="identity-current-tag">TU</div>';
+            else if(isLocked) tag = '<div class="identity-lock-tag">In uso</div>';
+            btn.innerHTML = `<div class="identity-avatar">${isGuest ? '<span class="material-icons-round" style="font-size:20px">person</span>' : initials}</div><div class="identity-name">${name}</div>${tag}`;
             if(!isLocked) btn.onclick = () => selectIdentity(name);
             c.appendChild(btn);
         });
@@ -1461,6 +1515,11 @@
     }
     function selectIdentity(name) {
         vibrate();
+        if(name === userIdentity) {
+            let m = document.getElementById('identity-modal'); m.classList.remove('open');
+            setTimeout(() => { m.style.display = 'none'; showStartupMessages(); }, 300);
+            return;
+        }
         userIdentity = name;
         localStorage.setItem('infermieri_identity_name', name);
         writeIdentityToSession();
@@ -1472,11 +1531,10 @@
         toggleMenu(); vibrate();
         requestChangeIdentityDirect();
     }
-    async function requestChangeIdentityDirect() {
-        localStorage.removeItem('infermieri_identity_name');
-        userIdentity = null;
-        await writeIdentityToSession();
-        persistIdentityToUidBackup();
+    function requestChangeIdentityDirect() {
+        // Non cancelliamo subito l'identità corrente: resta valida e visibile
+        // (evidenziata come "TU") nel selettore finché non si sceglie davvero
+        // un nome diverso, così non si perde mai la selezione per errore.
         openIdentityModal();
     }
 
@@ -2021,9 +2079,10 @@
             const lastUpText = `${lastUp.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'})} - ${lastUp.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}`;
             const optUpd = document.getElementById('options-last-update'); if(optUpd) optUpd.innerText = lastUpText;
         } catch(e) {}
+        const splashMinTime = new Promise(resolve => setTimeout(resolve, 2000));
         try {
             const response = await fetch(FILE_NAME); if(!response.ok) throw new Error("File mancante");
-            const buffer = await response.arrayBuffer(); await loadWorkbook(buffer);
+            const buffer = await response.arrayBuffer(); await loadWorkbook(buffer, splashMinTime);
         } catch(e) {
             console.error(e); document.getElementById('splash-brand').style.display = 'none';
             document.getElementById('manual-upload').style.display = 'block';
@@ -2035,7 +2094,7 @@
         const reader = new FileReader(); reader.onload = evt => loadWorkbook(evt.target.result); reader.readAsArrayBuffer(file);
     });
 
-    async function loadWorkbook(buffer) {
+    async function loadWorkbook(buffer, splashMinTime) {
         try {
             const workbook = new ExcelJS.Workbook(); await workbook.xlsx.load(buffer);
             let ws = workbook.worksheets[0]; let rawData = [];
@@ -2049,12 +2108,10 @@
                 rawData[rowNumber] = rowData;
             });
             finalData = parseHorizontalLayout(rawData);
-            vibrate();
             initApp();
-            setTimeout(() => {
-                document.getElementById('loader').style.opacity = '0';
-                setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
-            }, 900);
+            if(splashMinTime) await splashMinTime;
+            document.getElementById('loader').style.opacity = '0';
+            setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
         } catch(e) { alert("Errore file: " + e.message); }
     }
 
@@ -2132,12 +2189,12 @@
         renderDriverFilterDropdown(); updateDriverFilterBadge();
         initNotificationOptions(); loadNotificationHistory(); renderTable(); startLiveClock();
         setCurrentView("Tabella Turni");
-        setTimeout(scrollToToday, 600); setTimeout(checkForScheduleChanges, 2500);
+        setTimeout(scrollToToday, 600); setTimeout(checkForScheduleChanges, 3200);
         setTimeout(async () => {
             if(!userIdentity && identityRecoveryPromise) { try { await identityRecoveryPromise; } catch(e) {} }
             if(userIdentity) { writeIdentityToSession(); showStartupMessages(); }
             else showIdentityInfoPopup();
-        }, 1700);
+        }, 2600);
     }
 
     function initNotificationOptions() {
