@@ -1384,8 +1384,10 @@
     }
 
     function writeIdentityToSession() {
-        if(!fbReady) return;
-        db.collection('infermieri26_accessi').doc(sessionId).set({ identity: userIdentity || null }, { merge:true }).catch(()=>{});
+        if(!fbReady) return Promise.resolve();
+        return db.collection('infermieri26_accessi').doc(sessionId)
+            .set({ identity: userIdentity || null, online: document.visibilityState === 'visible' }, { merge:true })
+            .catch(e => console.error("Errore aggiornamento identità sessione:", e));
     }
 
     // ── Modale "Chi sei?" ────────────────────────────────────────────────────
@@ -1445,10 +1447,10 @@
         toggleMenu(); vibrate();
         requestChangeIdentityDirect();
     }
-    function requestChangeIdentityDirect() {
+    async function requestChangeIdentityDirect() {
         localStorage.removeItem('infermieri_identity_name');
         userIdentity = null;
-        writeIdentityToSession();
+        await writeIdentityToSession();
         openIdentityModal();
     }
 
