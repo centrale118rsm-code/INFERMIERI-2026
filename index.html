@@ -779,16 +779,17 @@
         <div class="modal-header">
             <div class="header-text">
                 <h3><span class="material-icons-round" style="margin-right:10px">notifications</span> NOTIFICHE</h3>
-                <span>Storico Avvisi</span>
+                <span>Avvisi turni e reperibilità</span>
             </div>
             <div style="display:flex;gap:10px">
-                <button class="btn-close-modal" onclick="clearAllNotif()" style="color:#ef4444">
-                    <span class="material-icons-round">delete_sweep</span>
-                </button>
                 <button class="btn-close-modal" onclick="closeNotifCenter()">
                     <span class="material-icons-round">close</span>
                 </button>
             </div>
+        </div>
+        <div class="admin-tabs" style="padding:12px 16px;">
+            <button class="admin-tab-btn active" data-notiftab="attive" onclick="switchNotifTab('attive',this)"><span class="material-icons-round">notifications_active</span> Attive</button>
+            <button class="admin-tab-btn" data-notiftab="archivio" onclick="switchNotifTab('archivio',this)"><span class="material-icons-round">archive</span> Archivio</button>
         </div>
         <div class="modal-body notif-list" id="notif-list-container"></div>
     </div>
@@ -1238,6 +1239,10 @@
             <button class="action-circle" onclick="vibrate();scrollToToday()" title="Vai a oggi">
                 <span class="material-icons-round">today</span>
             </button>
+            <button class="action-circle" onclick="openNotifCenter()" style="position:relative" title="Notifiche">
+                <span class="material-icons-round">notifications</span>
+                <span id="notif-badge" class="badge-dot"></span>
+            </button>
             <button class="action-circle driver-filter-btn" onclick="toggleDriverFilterDropdown(event)" style="position:relative">
                 <span class="material-icons-round">groups</span>
                 <span id="driver-filter-badge" class="badge-dot"></span>
@@ -1253,10 +1258,6 @@
                 <button class="action-circle-as" onclick="vibrate();window.open('https://centrale118rsm-code.github.io/Turni-Autisti-2026-Rsm/','_blank')">A.S.</button>
                 <button class="action-circle" onclick="toggleMonthDropdown(event)">
                     <span class="material-icons-round">calendar_month</span>
-                </button>
-                <button class="action-circle" onclick="openNotifCenter()" style="position:relative">
-                    <span class="material-icons-round">notifications</span>
-                    <span id="notif-badge" class="badge-dot"></span>
                 </button>
                 <button class="action-circle menu-trigger" onclick="toggleMenu()">
                     <span class="material-icons-round">more_vert</span>
@@ -1465,22 +1466,28 @@
     }
 
     // ── Modale "Chi sei?" ────────────────────────────────────────────────────
+    // La prenotazione di un nome è PERMANENTE (non basata sulla presenza in tempo
+    // reale): resta "occupato" finché quella persona non cambia esplicitamente
+    // identità, o finché non passano 5 giorni senza che abbia riaperto l'app
+    // (rete di sicurezza per liberare nomi abbandonati, es. dopo un reset del
+    // dispositivo). Così chi si logga all'apertura del programma e poi non tocca
+    // più il menu resta comunque correttamente segnato come "in uso".
+    const IDENTITY_CLAIM_MAX_AGE_MS = 5 * 24 * 60 * 60 * 1000;
     async function getLockedIdentities() {
         if(!fbReady) return new Set();
         try {
-            // Non ci basiamo più sul flag "online" (diventa false appena l'app va in
-            // background o lo schermo si blocca): consideriamo "in uso" chiunque abbia
-            // dato un segno di vita (heartbeat) negli ultimi 2 minuti, a prescindere
-            // dal fatto che l'app sia in primo piano in quel preciso istante.
-            const cutoffTs = firebase.firestore.Timestamp.fromMillis(Date.now() - 120000);
-            const snap = await db.collection('infermieri26_accessi').where('lastActive', '>', cutoffTs).get();
+            const myUid = fbAuth.currentUser && fbAuth.currentUser.uid;
+            const cutoffMs = Date.now() - IDENTITY_CLAIM_MAX_AGE_MS;
+            const snap = await db.collection('infermieri26_identities').get();
             const locked = new Set();
             snap.forEach(doc => {
-                if(doc.id === sessionId) return;
+                if(doc.id === myUid) return;
                 const d = doc.data();
-                if(d.identity && d.identity !== 'Ospite') locked.add(d.identity);
+                if(!d.name || d.name === 'Ospite') return;
+                const ms = tsToMillis(d.updatedAt);
+                if(ms && ms > cutoffMs) locked.add(d.name);
             });
-            console.log('[Identità] Nomi risultati in uso:', [...locked]);
+            console.log('[Identità] Nomi risultati in uso (prenotazione permanente):', [...locked]);
             return locked;
         } catch(e) { console.error("Errore lettura identità attive:", e); return new Set(); }
     }
@@ -1994,7 +2001,8 @@
 
     let finalData = [], drivers = [], selectedDrivers = new Set(),
         watchedDrivers = new Set(), notifHistory = [], deferredPrompt,
-        globalMonthsList = [], dinnerSelectedMonth = "", eventType = "cena";
+        globalMonthsList = [], dinnerSelectedMonth = "", eventType = "cena",
+        currentNotifTab = "attive";
 
     window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; });
 
@@ -2191,11 +2199,12 @@
         renderDriverFilterDropdown(); updateDriverFilterBadge();
         initNotificationOptions(); loadNotificationHistory(); renderTable(); startLiveClock();
         setCurrentView("Tabella Turni");
-        setTimeout(scrollToToday, 600); setTimeout(checkForScheduleChanges, 3200);
+        setTimeout(scrollToToday, 600);
         setTimeout(async () => {
             if(!userIdentity && identityRecoveryPromise) { try { await identityRecoveryPromise; } catch(e) {} }
-            if(userIdentity) { writeIdentityToSession(); showStartupMessages(); }
+            if(userIdentity) { writeIdentityToSession(); persistIdentityToUidBackup(); showStartupMessages(); }
             else showIdentityInfoPopup();
+            checkForScheduleChanges();
         }, 2600);
     }
 
@@ -2213,41 +2222,115 @@
         vibrate(); if(watchedDrivers.has(idx)) { watchedDrivers.delete(idx); el.parentElement.classList.remove('checked'); } else { watchedDrivers.add(idx); el.parentElement.classList.add('checked'); }
         localStorage.setItem('watched_nurses_ids', JSON.stringify([...watchedDrivers]));
     }
+    // ── Notifiche: cambi turno e reperibilità dell'operatore loggato ────────
     function checkForScheduleChanges() {
-        if(watchedDrivers.size === 0) return;
+        // Monitoriamo automaticamente solo la colonna dell'operatore attualmente
+        // identificato (non serve più selezionare manualmente chi seguire).
+        if(!userIdentity || userIdentity === 'Ospite') return;
+        const myDriver = drivers.find(d => d.name === userIdentity);
+        if(!myDriver) return;
+        const dIdx = myDriver.idx;
         let currentSnapshot = {};
         for(let i=1; i<finalData.length; i++) {
             let row = finalData[i]; let month = row[0].v; let day = row[1].v; if(!day || !month) continue;
             let dateKey = `${month}-${day}`;
-            watchedDrivers.forEach(dIdx => {
-                let cell = row[dIdx]; let val = cell.v ? cell.v.toString().trim() : "";
-                currentSnapshot[`${dateKey}-DRV${dIdx}`] = val;
-            });
+            let cell = row[dIdx]; let val = cell && cell.v ? cell.v.toString().trim() : "";
+            currentSnapshot[dateKey] = val;
         }
-        let oldJson = localStorage.getItem('nurse_schedule_snapshot');
+        let snapKey = `nurse_schedule_snapshot_${myDriver.originalName || myDriver.name}`;
+        let oldJson = localStorage.getItem(snapKey);
         if(oldJson) {
             let oldSnapshot = JSON.parse(oldJson); let changesFound = [];
-            for(const [key, newVal] of Object.entries(currentSnapshot)) {
-                let oldVal = oldSnapshot[key];
-                if(oldVal && oldVal !== newVal) {
-                    let parts = key.split("-DRV"); let drvIdx = parseInt(parts[1]);
-                    let drvName = drivers.find(d => d.idx === drvIdx)?.name || "Collega";
-                    let detailMsg = `<b>${drvName}</b> - ${parts[0]}<br><span style="font-size:0.85rem;color:var(--text-sec)">Da: <b>${oldVal}</b> &rarr; A: <b>${newVal}</b></span>`;
-                    changesFound.push(detailMsg); notifHistory.unshift({ id:Date.now()+Math.random(), text:detailMsg, read:false, date:new Date().toLocaleString() });
+            for(const [dateKey, newVal] of Object.entries(currentSnapshot)) {
+                let oldVal = oldSnapshot[dateKey];
+                if(oldVal !== undefined && oldVal !== newVal) {
+                    let detailMsg = oldVal === ""
+                        ? `<b>Nuovo turno inserito</b> - ${dateKey}<br><span style="font-size:0.85rem;color:var(--text-sec)">Turno: <b>${newVal || '—'}</b></span>`
+                        : newVal === ""
+                        ? `<b>Turno rimosso</b> - ${dateKey}<br><span style="font-size:0.85rem;color:var(--text-sec)">Era: <b>${oldVal}</b></span>`
+                        : `<b>Turno modificato</b> - ${dateKey}<br><span style="font-size:0.85rem;color:var(--text-sec)">Da: <b>${oldVal}</b> &rarr; A: <b>${newVal}</b></span>`;
+                    changesFound.push(detailMsg);
+                    notifHistory.unshift({ id:Date.now()+Math.random(), text:detailMsg, read:false, archived:false, date:new Date().toLocaleString() });
                 }
             }
             if(changesFound.length > 0) { saveNotifications(); updateBadge(); showChangeAlert(changesFound); }
         }
-        localStorage.setItem('nurse_schedule_snapshot', JSON.stringify(currentSnapshot));
+        localStorage.setItem(snapKey, JSON.stringify(currentSnapshot));
+        checkReperibilitaReminder(myDriver);
     }
-    function loadNotificationHistory() { let saved = localStorage.getItem('notifications_history_nurses'); if(saved) notifHistory = JSON.parse(saved); updateBadge(); }
+
+    function checkReperibilitaReminder(myDriver) {
+        const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+        const tDay = tomorrow.getDate();
+        const monthNames = Object.keys(MONTH_MAP);
+        const tMonthName = monthNames.find(k => MONTH_MAP[k] === tomorrow.getMonth());
+        for(let i=1; i<finalData.length; i++) {
+            let row = finalData[i]; let month = row[0].v; let day = row[1].v; if(!day || !month) continue;
+            if(parseInt(day) === tDay && (month || "").toString().toUpperCase().trim() === tMonthName) {
+                let cell = row[myDriver.idx];
+                let val = cell && cell.v ? cell.v.toString().trim() : "";
+                let subVal = cell && cell.subV ? cell.subV.toString().trim() : "";
+                let supVal = cell && cell.supV ? cell.supV.toString().trim() : "";
+                if(isRepStr(val) || isRepStr(subVal) || isRepStr(supVal)) {
+                    const reminderKey = `rep_reminder_${myDriver.originalName || myDriver.name}_${tMonthName}_${tDay}`;
+                    if(!localStorage.getItem(reminderKey)) {
+                        const dateLabel = tomorrow.toLocaleDateString('it-IT', { day:'2-digit', month:'long' });
+                        const msg = `<b>📟 Promemoria Reperibilità</b><br><span style="font-size:0.85rem;color:var(--text-sec)">Domani, <b>${dateLabel}</b>, sei <b>reperibile</b>.</span>`;
+                        notifHistory.unshift({ id:Date.now()+Math.random(), text:msg, read:false, archived:false, date:new Date().toLocaleString() });
+                        saveNotifications(); updateBadge();
+                        localStorage.setItem(reminderKey, '1');
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    function loadNotificationHistory() {
+        let saved = localStorage.getItem('notifications_history_nurses');
+        if(saved) { notifHistory = JSON.parse(saved); notifHistory.forEach(n => { if(n.archived === undefined) n.archived = false; }); }
+        updateBadge();
+    }
     function saveNotifications() { localStorage.setItem('notifications_history_nurses', JSON.stringify(notifHistory)); }
-    function updateBadge() { const c = notifHistory.filter(n => !n.read).length; const b = document.getElementById('notif-badge'); if(c > 0) b.classList.add('visible'); else b.classList.remove('visible'); }
-    function openNotifCenter() { vibrate(); let modal = document.getElementById('notif-center-modal'); modal.style.display = 'flex'; setTimeout(() => modal.classList.add('open'), 10); renderNotifList(); setCurrentView("Notifiche"); setTimeout(() => { notifHistory.forEach(n => n.read = true); saveNotifications(); updateBadge(); }, 1000); }
+    function updateBadge() { const c = notifHistory.filter(n => !n.read && !n.archived).length; const b = document.getElementById('notif-badge'); if(c > 0) b.classList.add('visible'); else b.classList.remove('visible'); }
+    function openNotifCenter() {
+        vibrate(); let modal = document.getElementById('notif-center-modal'); modal.style.display = 'flex'; setTimeout(() => modal.classList.add('open'), 10);
+        currentNotifTab = 'attive';
+        document.querySelectorAll('#notif-center-modal .admin-tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector('#notif-center-modal .admin-tab-btn[data-notiftab="attive"]').classList.add('active');
+        renderNotifList(); setCurrentView("Notifiche");
+        setTimeout(() => { notifHistory.forEach(n => n.read = true); saveNotifications(); updateBadge(); }, 1000);
+    }
     function closeNotifCenter() { let modal = document.getElementById('notif-center-modal'); modal.classList.remove('open'); setTimeout(() => modal.style.display = 'none', 300); }
-    function renderNotifList() { const c = document.getElementById('notif-list-container'); c.innerHTML = ""; if(notifHistory.length===0){c.innerHTML='<div class="no-notif">Nessuna notifica.</div>';return;} notifHistory.forEach(item=>{c.innerHTML+=`<div class="notif-item ${item.read?'':'unread'}"><div class="notif-date">${item.date}</div><div class="notif-text">${item.text}</div><button class="btn-del-notif" onclick="deleteNotif(${item.id})"><span class="material-icons-round" style="font-size:18px">close</span></button></div>`;}); }
-    function deleteNotif(id) { vibrate(); notifHistory = notifHistory.filter(n => n.id !== id); saveNotifications(); renderNotifList(); updateBadge(); }
-    function clearAllNotif() { if(confirm("Eliminare tutto?")) { vibrate(); notifHistory=[]; saveNotifications(); renderNotifList(); updateBadge(); } }
+    function switchNotifTab(tab, btnEl) {
+        vibrate(); currentNotifTab = tab;
+        document.querySelectorAll('#notif-center-modal .admin-tab-btn').forEach(b => b.classList.remove('active'));
+        if(btnEl) btnEl.classList.add('active');
+        renderNotifList();
+    }
+    function renderNotifList() {
+        const c = document.getElementById('notif-list-container');
+        const items = notifHistory.filter(n => currentNotifTab === 'archivio' ? n.archived : !n.archived);
+        if(items.length === 0) {
+            c.innerHTML = `<div class="no-notif">${currentNotifTab === 'archivio' ? 'Archivio vuoto.' : 'Nessuna notifica attiva.'}</div>`;
+            return;
+        }
+        c.innerHTML = items.map(item => {
+            const actionBtn = currentNotifTab === 'archivio'
+                ? `<button class="btn-del-notif" title="Ripristina" onclick="restoreNotif(${item.id})"><span class="material-icons-round" style="font-size:18px">unarchive</span></button>
+                   <button class="btn-del-notif" title="Elimina definitivamente" onclick="permanentDeleteNotif(${item.id})" style="color:#dc2626"><span class="material-icons-round" style="font-size:18px">delete_forever</span></button>`
+                : `<button class="btn-del-notif" title="Archivia" onclick="deleteNotif(${item.id})"><span class="material-icons-round" style="font-size:18px">archive</span></button>`;
+            return `<div class="notif-item ${item.read?'':'unread'}">
+                <div class="notif-date">${item.date}</div>
+                <div class="notif-text">${item.text}</div>
+                <div style="display:flex;gap:4px;">${actionBtn}</div>
+            </div>`;
+        }).join('');
+    }
+    function deleteNotif(id) { vibrate(); const n = notifHistory.find(x => x.id === id); if(n) n.archived = true; saveNotifications(); renderNotifList(); updateBadge(); }
+    function restoreNotif(id) { vibrate(); const n = notifHistory.find(x => x.id === id); if(n) n.archived = false; saveNotifications(); renderNotifList(); updateBadge(); }
+    function permanentDeleteNotif(id) { if(!confirm("Eliminare definitivamente questa notifica?")) return; vibrate(); notifHistory = notifHistory.filter(n => n.id !== id); saveNotifications(); renderNotifList(); updateBadge(); }
+    function clearAllNotif() { if(confirm("Archiviare tutte le notifiche attive?")) { vibrate(); notifHistory.forEach(n => { if(!n.archived) n.archived = true; }); saveNotifications(); renderNotifList(); updateBadge(); } }
     function showChangeAlert(changes) { document.getElementById('alert-message-text').innerHTML = "Cambi turno:<br>" + changes.slice(0,5).join("<br>"); let m = document.getElementById('alert-modal'); m.style.display = 'flex'; setTimeout(() => m.classList.add('open'), 100); vibrate(); }
     function closeAlertAndSave() { vibrate(); let m = document.getElementById('alert-modal'); m.classList.remove('open'); setTimeout(() => m.style.display='none', 300); }
 
