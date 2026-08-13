@@ -1468,17 +1468,19 @@
     async function getLockedIdentities() {
         if(!fbReady) return new Set();
         try {
-            const cutoff = Date.now() - 90000;
-            const snap = await db.collection('infermieri26_accessi').where('online','==', true).get();
+            // Non ci basiamo più sul flag "online" (diventa false appena l'app va in
+            // background o lo schermo si blocca): consideriamo "in uso" chiunque abbia
+            // dato un segno di vita (heartbeat) negli ultimi 2 minuti, a prescindere
+            // dal fatto che l'app sia in primo piano in quel preciso istante.
+            const cutoffTs = firebase.firestore.Timestamp.fromMillis(Date.now() - 120000);
+            const snap = await db.collection('infermieri26_accessi').where('lastActive', '>', cutoffTs).get();
             const locked = new Set();
             snap.forEach(doc => {
                 if(doc.id === sessionId) return;
                 const d = doc.data();
-                if(d.identity && d.identity !== 'Ospite') {
-                    const ms = tsToMillis(d.lastActive);
-                    if(ms && ms > cutoff) locked.add(d.identity);
-                }
+                if(d.identity && d.identity !== 'Ospite') locked.add(d.identity);
             });
+            console.log('[Identità] Nomi risultati in uso:', [...locked]);
             return locked;
         } catch(e) { console.error("Errore lettura identità attive:", e); return new Set(); }
     }
