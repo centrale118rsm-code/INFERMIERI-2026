@@ -2974,6 +2974,66 @@
         document.getElementById('wheel-char-quote').innerText = IRONIC_QUOTES[Math.floor(Math.random()*IRONIC_QUOTES.length)];
         rev.classList.add('show');
     }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // GESTIONE TASTO "INDIETRO" (Android/browser) — con un popup aperto, il
+    // tasto indietro deve chiudere SOLO il popup (con la sua animazione),
+    // non l'intera app. Funziona osservando quando un popup riceve/perde la
+    // classe "open" e sincronizzando con la cronologia del browser.
+    // ═══════════════════════════════════════════════════════════════════════
+    const BACK_BUTTON_CLOSERS = {
+        'graziella-modal': closeGraziellaModal,
+        'custom-announce-modal': closeAnnounceModal,
+        'alert-modal': closeAlertAndSave,
+        'notif-center-modal': closeNotifCenter,
+        'month-select-dropdown': closeMonthDropdown,
+        'shift-modal': closeShiftModal,
+        'options-modal': closeOptionsModal,
+        'admin-login-modal': closeAdminLoginModal,
+        'admin-panel-modal': closeAdminPanel,
+        'access-detail-modal': closeAccessDetail,
+        'dinner-modal': closeDinnerModal,
+        'wheel-modal': closeWheelModal,
+        'driver-filter-dropdown': closeDriverFilterDropdown,
+        'menu-dropdown': toggleMenu
+    };
+    let modalHistoryPushed = false;
+    let currentBackButtonModalId = null;
+
+    function findOpenTrackedModal() {
+        for(const id in BACK_BUTTON_CLOSERS) {
+            const el = document.getElementById(id);
+            if(el && el.classList.contains('open')) return id;
+        }
+        return null;
+    }
+    function syncModalHistoryState() {
+        const openId = findOpenTrackedModal();
+        if(openId && !modalHistoryPushed) {
+            history.pushState({ modalId: openId }, '');
+            modalHistoryPushed = true;
+            currentBackButtonModalId = openId;
+        } else if(!openId && modalHistoryPushed) {
+            // Il popup è stato chiuso dal codice (es. tap sulla X), non dal tasto
+            // indietro: consumiamo la voce di cronologia aggiunta senza riaprire nulla.
+            modalHistoryPushed = false;
+            currentBackButtonModalId = null;
+            history.back();
+        }
+    }
+    window.addEventListener('popstate', () => {
+        if(currentBackButtonModalId && BACK_BUTTON_CLOSERS[currentBackButtonModalId]) {
+            modalHistoryPushed = false;
+            const fn = BACK_BUTTON_CLOSERS[currentBackButtonModalId];
+            currentBackButtonModalId = null;
+            fn();
+        }
+    });
+    Object.keys(BACK_BUTTON_CLOSERS).forEach(id => {
+        const el = document.getElementById(id);
+        if(!el) return;
+        new MutationObserver(syncModalHistoryState).observe(el, { attributes:true, attributeFilter:['class'] });
+    });
 </script>
 </body>
 </html>
